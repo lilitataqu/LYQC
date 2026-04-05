@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的比赛",
+  "usingComponents": {
+    "z-paging": "/uni_modules/z-paging/components/z-paging/z-paging"
+  }
+}

@@ -1,0 +1,32 @@
+package com.ueit.running.service.impl;
+
+import com.ueit.running.domain.RunInfo;
+import com.ueit.running.domain.vo.RunInfoDataVo;
+import com.ueit.running.mapper.RunInfoDataMapper;
+import com.ueit.running.service.IRunInfoDataService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+@Service
+public class RunInfoDataServiceImpl implements IRunInfoDataService {
+
+    @Autowired
+    private  RunInfoDataMapper runInfoDataMapper;
+
+
+    @Override
+    public RunInfoDataVo selectRunInfoDataById(Long id) {
+
+
+
+        return runInfoDataMapper.selectRunInfoById(id);
+    }
+
+    @Override
+    public List<RunInfoDataVo> selectRunInfoDataList(RunInfo runInfo) {
+
+
+        return runInfoDataMapper.selectRunInfoList(runInfo);
+    }
+}

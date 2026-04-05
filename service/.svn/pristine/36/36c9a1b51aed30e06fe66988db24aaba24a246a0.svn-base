@@ -1,0 +1,239 @@
+package com.ueit.running.domain;
+
+import java.time.LocalTime;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ueit.common.annotation.Excel;
+import com.ueit.common.core.domain.BaseEntity;
+
+/**
+ * 跑步信息对象 run_info
+ *
+ * @author douwq
+ * @date 2022-07-07
+ */
+public class RunInfo extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+    /** $column.columnComment */
+    private Long id;
+
+    /** 用户id */
+//    @Excel(name = "用户id")
+    private Long userId;
+
+    /** 跑步时长 */
+    @JsonFormat(pattern = "HH:mm:ss")
+    @Excel(name = "跑步时长", width = 30, dateFormat = "HH:mm:ss", sort = 0)
+    private LocalTime time;
+
+    /** 平均配速 */
+    @Excel(name = "平均配速")
+    private String speed;
+
+    /** 距离 */
+    @Excel(name = "距离(Km)")
+    private Long distance;
+
+    /** 卡路里 */
+    @Excel(name = "卡路里(kcal)")
+    private Long kcal;
+
+    /** 公里速度 */
+//    @Excel(name = "公里速度")
+    private String kmSpeed;
+
+    /** 路径定位 */
+//    @Excel(name = "路径定位")
+    private String points;
+
+    /** 海拔 */
+//    @Excel(name = "海拔")
+    private String altitude;
+
+    /** 爬升高度 */
+//    @Excel(name = "爬升高度")
+    private Long altitudeSum;
+
+    /** 跑步类型 */
+//    @Excel(name = "跑步类型")
+    private Integer runType;
+
+    /** 步数(仅做数据分析) */
+    private Integer step;
+
+    /** 状态 */
+    @Excel(name = "状态", dictType = "app_run_state")
+    private Integer state;
+
+    /** 0 未删除；1 删除 */
+//    @Excel(name = "0 未删除；1 删除")
+    private Integer delState;
+
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
+    @Excel(name = "跑步时间", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
+    public void setUserId(Long userId)
+    {
+        this.userId = userId;
+    }
+
+    public Long getUserId()
+    {
+        return userId;
+    }
+    public void setTime(LocalTime time)
+    {
+        this.time = time;
+    }
+
+    public LocalTime getTime()
+    {
+        return time;
+    }
+    public void setSpeed(String speed)
+    {
+        this.speed = speed;
+    }
+
+    public String getSpeed()
+    {
+        return speed;
+    }
+    public void setKcal(Long kcal)
+    {
+        this.kcal = kcal;
+    }
+
+    public Long getKcal()
+    {
+        return kcal;
+    }
+    public void setDistance(Long distance)
+    {
+        this.distance = distance;
+    }
+
+    public Long getDistance()
+    {
+        return distance;
+    }
+    public void setKmSpeed(String kmSpeed)
+    {
+        this.kmSpeed = kmSpeed;
+    }
+
+    public String getKmSpeed()
+    {
+        return kmSpeed;
+    }
+    public void setPoints(String points)
+    {
+        this.points = points;
+    }
+
+    public String getPoints()
+    {
+        return points;
+    }
+    public void setAltitude(String altitude)
+    {
+        this.altitude = altitude;
+    }
+
+    public String getAltitude()
+    {
+        return altitude;
+    }
+    public void setAltitudeSum(Long altitudeSum)
+    {
+        this.altitudeSum = altitudeSum;
+    }
+
+    public Long getAltitudeSum()
+    {
+        return altitudeSum;
+    }
+    public void setRunType(Integer runType)
+    {
+        this.runType = runType;
+    }
+
+    public Integer getStep() {
+        return step;
+    }
+
+    public void setStep(Integer step) {
+        this.step = step;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public Integer getRunType()
+    {
+        return runType;
+    }
+    public void setDelState(Integer delState)
+    {
+        this.delState = delState;
+    }
+
+    public Integer getDelState()
+    {
+        return delState;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("id", getId())
+            .append("userId", getUserId())
+            .append("time", getTime())
+            .append("speed", getSpeed())
+            .append("kcal", getKcal())
+            .append("distance", getDistance())
+            .append("kmSpeed", getKmSpeed())
+            .append("points", getPoints())
+            .append("altitude", getAltitude())
+            .append("altitudeSum", getAltitudeSum())
+            .append("runType", getRunType())
+            .append("delState", getDelState())
+            .append("createBy", getCreateBy())
+            .append("createTime", getCreateTime())
+            .append("updateBy", getUpdateBy())
+            .append("updateTime", getUpdateTime())
+            .toString();
+    }
+}

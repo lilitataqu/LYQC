@@ -1,0 +1,105 @@
+package com.ueit.web.controller.running;
+
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+
+import com.ueit.common.core.domain.entity.SysUser;
+import com.ueit.common.utils.SecurityUtils;
+import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.ueit.common.annotation.Log;
+import com.ueit.common.core.controller.BaseController;
+import com.ueit.common.core.domain.AjaxResult;
+import com.ueit.common.enums.BusinessType;
+import com.ueit.running.domain.UserWechat;
+import com.ueit.running.service.IUserWechatService;
+import com.ueit.common.utils.poi.ExcelUtil;
+import com.ueit.common.core.page.TableDataInfo;
+
+/**
+ * 系统用户与微信用户关联Controller
+ *
+ * @author douwq
+ * @date 2022-07-15
+ */
+@RestController
+@RequestMapping("/running/wechat" )
+@AllArgsConstructor
+public class UserWechatController extends BaseController {
+    private final IUserWechatService userWechatService;
+
+/**
+ * 查询系统用户与微信用户关联列表
+ */
+@PreAuthorize("@ss.hasPermi('running:wechat:list')" )
+@GetMapping("/list" )
+    public TableDataInfo list(UserWechat userWechat) {
+        startPage();
+        List<UserWechat> list = userWechatService.selectUserWechatList(userWechat);
+        return getDataTable(list);
+    }
+
+    /**
+     * 导出系统用户与微信用户关联列表
+     */
+    @PreAuthorize("@ss.hasPermi('running:wechat:export')" )
+    @Log(title = "系统用户与微信用户关联" , businessType = BusinessType.EXPORT)
+    @PostMapping("/export" )
+    public void export(HttpServletResponse response, UserWechat userWechat) {
+        List<UserWechat> list = userWechatService.selectUserWechatList(userWechat);
+        ExcelUtil<UserWechat> util = new ExcelUtil<UserWechat>(UserWechat. class);
+        util.exportExcel(response, list, "系统用户与微信用户关联数据" );
+    }
+
+    /**
+     * 获取系统用户与微信用户关联详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('running:wechat:query')" )
+    @GetMapping(value = "/{id}" )
+    public AjaxResult getInfo(@PathVariable("id" ) Long id) {
+        return AjaxResult.success(userWechatService.selectUserWechatById(id));
+    }
+
+    /**
+     * 新增系统用户与微信用户关联
+     */
+    @PreAuthorize("@ss.hasPermi('running:wechat:add')" )
+    @Log(title = "系统用户与微信用户关联" , businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody UserWechat userWechat) {
+        return toAjax(userWechatService.insertUserWechat(userWechat));
+    }
+
+    /**
+     * 修改系统用户与微信用户关联
+     */
+    @PreAuthorize("@ss.hasPermi('running:wechat:edit')" )
+    @Log(title = "系统用户与微信用户关联" , businessType = BusinessType.UPDATE)
+    @PutMapping
+    public AjaxResult edit(@RequestBody UserWechat userWechat) {
+        return toAjax(userWechatService.updateUserWechat(userWechat));
+    }
+
+    /**
+     * 删除系统用户与微信用户关联
+     */
+    @PreAuthorize("@ss.hasPermi('running:wechat:remove')" )
+    @Log(title = "系统用户与微信用户关联" , businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}" )
+    public AjaxResult remove(@PathVariable Long[]ids) {
+        return toAjax(userWechatService.deleteUserWechatByIds(ids));
+    }
+
+
+
+
+}

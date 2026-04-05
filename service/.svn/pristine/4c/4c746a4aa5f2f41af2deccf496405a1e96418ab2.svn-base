@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.TournamentGroupMapper">
+
+    <resultMap type="TournamentGroup" id="TournamentGroupResult">
+        <result property="id" column="id"/>
+        <result property="tournamentId" column="tournament_id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="distance" column="distance"/>
+        <result property="delState" column="del_state"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectTournamentGroupVo">
+        select id, tournament_id, name, sex, distance, del_state, create_by, create_time, update_by, update_time
+        from tb_tournament_group
+    </sql>
+
+    <select id="selectTournamentGroupList" parameterType="TournamentGroup" resultMap="TournamentGroupResult">
+        <include refid="selectTournamentGroupVo"/>
+        <where>
+            <if test="tournamentId != null ">
+                and tournament_id = #{tournamentId}
+            </if>
+            <if test="name != null  and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="sex != null ">
+                and sex = #{sex}
+            </if>
+            <if test="distance != null ">
+                and distance = #{distance}
+            </if>
+            and del_state = 0
+        </where>
+    </select>
+
+    <select id="selectTournamentGroupById" parameterType="Long"
+            resultMap="TournamentGroupResult">
+        <include refid="selectTournamentGroupVo"/>
+        where id = #{id} and del_state = 0
+    </select>
+
+    <insert id="insertTournamentGroup" parameterType="TournamentGroup">
+        insert into tb_tournament_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,
+            </if>
+            <if test="tournamentId != null">tournament_id,
+            </if>
+            <if test="name != null and name != ''">name,
+            </if>
+            <if test="sex != null">sex,
+            </if>
+            <if test="distance != null">distance,
+            </if>
+            <if test="delState != null">del_state,
+            </if>
+            <if test="createBy != null">create_by,
+            </if>
+            <if test="createTime != null">create_time,
+            </if>
+            <if test="updateBy != null">update_by,
+            </if>
+            <if test="updateTime != null">update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},
+            </if>
+            <if test="tournamentId != null">#{tournamentId},
+            </if>
+            <if test="name != null and name != ''">#{name},
+            </if>
+            <if test="sex != null">#{sex},
+            </if>
+            <if test="distance != null">#{distance},
+            </if>
+            <if test="delState != null">#{delState},
+            </if>
+            <if test="createBy != null">#{createBy},
+            </if>
+            <if test="createTime != null">#{createTime},
+            </if>
+            <if test="updateBy != null">#{updateBy},
+            </if>
+            <if test="updateTime != null">#{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateTournamentGroup" parameterType="TournamentGroup">
+        update tb_tournament_group
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tournamentId != null">tournament_id =
+                #{tournamentId},
+            </if>
+            <if test="name != null and name != ''">name =
+                #{name},
+            </if>
+            <if test="sex != null">sex =
+                #{sex},
+            </if>
+            <if test="distance != null">distance =
+                #{distance},
+            </if>
+            <if test="delState != null">del_state =
+                #{delState},
+            </if>
+            <if test="createBy != null">create_by =
+                #{createBy},
+            </if>
+            <if test="createTime != null">create_time =
+                #{createTime},
+            </if>
+            <if test="updateBy != null">update_by =
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">update_time =
+                #{updateTime},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTournamentGroupById" parameterType="Long">
+        update tb_tournament_group set del_state = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteTournamentGroupByIds" parameterType="String">
+        update tb_tournament_group set del_state = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

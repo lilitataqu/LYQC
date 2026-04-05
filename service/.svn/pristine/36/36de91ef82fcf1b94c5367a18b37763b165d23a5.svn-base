@@ -1,0 +1,170 @@
+package com.ueit.running.domain.vo;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ueit.common.annotation.Excel;
+import com.ueit.common.core.domain.BaseEntity;
+
+/**
+ * 本周各学员运动量对象
+ *
+ * @author douwq
+ * @date 2022-08-01
+ */
+public class UserWeekStatistic extends BaseEntity {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * $column.columnComment
+     */
+    private Long id;
+
+    /**
+     * 用户ID
+     */
+//    @Excel(name = "用户ID")
+    private Long userId;
+
+    /**
+     * 学号
+     */
+    @Excel(name = "学号")
+    private String studentId;
+
+    /**
+     * 用户昵称
+     */
+    @Excel(name = "用户昵称")
+    private String nickName;
+
+    /**
+     * 手机号
+     */
+//    @Excel(name = "手机号")
+    private String phone;
+
+    /**
+     * 部门ID
+     */
+//    @Excel(name = "部门ID")
+    private Long deptId;
+
+    /**
+     * 部门名称
+     */
+    @Excel(name = "部门名称")
+    private String deptName;
+
+    /**
+     * 运动距离
+     */
+    @Excel(name = "运动距离")
+    private Long distance;
+
+    /**
+     * 消耗卡路里
+     */
+    @Excel(name = "消耗卡路里")
+    private Long kcal;
+
+    /**
+     * 运动次数
+     */
+    @Excel(name = "运动次数")
+    private Long runCount;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDistance(Long distance) {
+        this.distance = distance;
+    }
+
+    public Long getDistance() {
+        return distance;
+    }
+
+    public void setKcal(Long kcal) {
+        this.kcal = kcal;
+    }
+
+    public Long getKcal() {
+        return kcal;
+    }
+
+    public void setRunCount(Long runCount) {
+        this.runCount = runCount;
+    }
+
+    public Long getRunCount() {
+        return runCount;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("userId", getUserId())
+                .append("nickName", getNickName())
+                .append("phone", getPhone())
+                .append("deptId", getDeptId())
+                .append("deptName", getDeptName())
+                .append("distance", getDistance())
+                .append("kcal", getKcal())
+                .append("runCount", getRunCount())
+                .toString();
+    }
+}

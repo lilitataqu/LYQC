@@ -1,0 +1,97 @@
+package com.ueit.running.domain;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ueit.common.annotation.Excel;
+import com.ueit.common.core.domain.BaseEntity;
+
+/**
+ * 比赛分组对象 tb_tournament_group
+ *
+ * @author douwq
+ * @date 2022-11-29
+ */
+public class TournamentGroup extends BaseEntity
+        {
+private static final long serialVersionUID=1L;
+
+    /** 比赛分组ID */
+    private Long id;
+
+    /** 比赛ID */
+            @Excel(name = "比赛ID" )
+    private Long tournamentId;
+
+    /** 分组名称 */
+            @Excel(name = "分组名称" )
+    private String name;
+
+    /** 性别 */
+            @Excel(name = "性别" )
+    private Integer sex;
+
+    /** 距离（米） */
+            @Excel(name = "距离" , readConverterExp = "米=" )
+    private Long distance;
+
+    public void setId(Long id)
+            {
+            this.id = id;
+            }
+
+    public Long getId()
+            {
+            return id;
+            }
+    public void setTournamentId(Long tournamentId)
+            {
+            this.tournamentId = tournamentId;
+            }
+
+    public Long getTournamentId()
+            {
+            return tournamentId;
+            }
+    public void setName(String name)
+            {
+            this.name = name;
+            }
+
+    public String getName()
+            {
+            return name;
+            }
+    public void setSex(Integer sex)
+            {
+            this.sex = sex;
+            }
+
+    public Integer getSex()
+            {
+            return sex;
+            }
+    public void setDistance(Long distance)
+            {
+            this.distance = distance;
+            }
+
+    public Long getDistance()
+            {
+            return distance;
+            }
+
+@Override
+public String toString(){
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("id" ,getId())
+            .append("tournamentId" ,getTournamentId())
+            .append("name" ,getName())
+            .append("sex" ,getSex())
+            .append("distance" ,getDistance())
+            .append("createBy" ,getCreateBy())
+            .append("createTime" ,getCreateTime())
+            .append("updateBy" ,getUpdateBy())
+            .append("updateTime" ,getUpdateTime())
+        .toString();
+        }
+        }

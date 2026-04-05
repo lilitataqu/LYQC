@@ -1,0 +1,535 @@
+<template>
+  <div class="app-container">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+      <el-form-item label="比赛名称" prop="name">
+        <el-input
+          v-model="queryParams.name"
+          placeholder="请输入比赛名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="报名时间" prop="registrationTime">
+        <el-date-picker
+          v-model="queryParams.registrationTime"
+          :clearable="false"
+          value-format="yyyy-MM-dd"
+          format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="比赛时间" prop="tournamentTime">
+        <el-date-picker
+          v-model="queryParams.tournamentTime"
+          :clearable="false"
+          value-format="yyyy-MM-dd"
+          format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+      </el-form-item>
+      <!--<el-form-item label="报名开始时间" prop="registrationTimeStart">
+        <el-date-picker clearable
+                        v-model="queryParams.registrationTimeStart"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择报名开始时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="报名结束时间" prop="registrationTimeEnd">
+        <el-date-picker clearable
+                        v-model="queryParams.registrationTimeEnd"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择报名结束时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="比赛开始时间" prop="tournamentTimeStart">
+        <el-date-picker clearable
+                        v-model="queryParams.tournamentTimeStart"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择比赛开始时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="比赛结束时间" prop="tournamentTimeEnd">
+        <el-date-picker clearable
+                        v-model="queryParams.tournamentTimeEnd"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择比赛结束时间">
+        </el-date-picker>
+      </el-form-item>-->
+      <!--<el-form-item label="报名开始状态" prop="registrationIs">
+        <el-input
+          v-model="queryParams.registrationIs"
+          placeholder="请输入报名开始状态"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="比赛开始状态" prop="tournamentIs">
+        <el-input
+          v-model="queryParams.tournamentIs"
+          placeholder="请输入比赛开始状态"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>-->
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['running:tournament:add']"
+        >新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['running:tournament:edit']"
+        >修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['running:tournament:remove']"
+        >删除</el-button>
+      </el-col>
+      <!--<el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['running:tournament:export']"
+        >导出</el-button>
+      </el-col>-->
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row>
+
+    <el-table v-loading="loading" :data="tournamentList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="比赛ID" align="center" prop="id" width="100"/>
+      <el-table-column label="比赛名称" align="center" prop="name" />
+      <el-table-column label="封面" align="center" prop="cover" width="100">
+        <template slot-scope="scope">
+          <image-preview :src="scope.row.cover" :width="50" :height="50"/>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="比赛摘要" align="center" prop="description" />-->
+      <el-table-column label="最多参赛次数" align="center" prop="maxNumber" />
+      <el-table-column label="参与人数" align="center" prop="participantsNumber" />
+<!--      <el-table-column label="内容" align="center" prop="text" />-->
+      <el-table-column label="报名开始时间" align="center" prop="registrationTimeStart" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.registrationTimeStart, '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="报名结束时间" align="center" prop="registrationTimeEnd" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.registrationTimeEnd, '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="比赛开始时间" align="center" prop="tournamentTimeStart" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.tournamentTimeStart, '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="比赛结束时间" align="center" prop="tournamentTimeEnd" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.tournamentTimeEnd, '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <!--<el-table-column label="报名开始状态" align="center" prop="registrationIs" />-->
+      <!--<el-table-column label="比赛开始状态" align="center" prop="tournamentIs" />-->
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['running:tournament:edit']"
+          >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['running:tournament:remove']"
+          >删除</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="openGroupPage(scope.row)"
+            v-hasPermi="['running:tournamentGroup:list']"
+          >比赛分组管理</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="openRankPage(scope.row)"
+            v-hasPermi="['running:tournament:rank']"
+          >排行榜</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      @pagination="getList"
+    />
+
+    <!-- 添加或修改比赛管理对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+        <el-form-item label="封面图片">
+          <!--<div>建议大小1095 * 450</div>-->
+          <image-upload v-model="form.cover" :limit="1" />
+        </el-form-item>
+        <el-form-item label="比赛名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入比赛名称" />
+        </el-form-item>
+        <el-form-item label="最多参赛次数" prop="maxNumber">
+          <el-input v-model="form.maxNumber" placeholder="请输入最多参赛次数" type="number" />
+        </el-form-item>
+        <el-form-item label="报名时间" prop="registrationTime">
+          <el-date-picker
+            v-model="form.registrationTime"
+            value-format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd HH:mm"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="比赛时间" prop="tournamentTime">
+          <el-date-picker
+            v-model="form.tournamentTime"
+            value-format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd HH:mm"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="比赛摘要" prop="description">
+          <el-input v-model="form.description" type="textarea" placeholder="请输入比赛摘要" />
+        </el-form-item>
+        <!--<el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="报名开始时间" prop="registrationTimeStart">
+              <el-date-picker clearable
+                              v-model="form.registrationTimeStart"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              placeholder="请选择报名开始时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="报名结束时间" prop="registrationTimeEnd">
+              <el-date-picker clearable
+                              v-model="form.registrationTimeEnd"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              placeholder="请选择报名结束时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="比赛开始时间" prop="tournamentTimeStart">
+              <el-date-picker clearable
+                              v-model="form.tournamentTimeStart"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              placeholder="请选择比赛开始时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="比赛结束时间" prop="tournamentTimeEnd">
+              <el-date-picker clearable
+                              v-model="form.tournamentTimeEnd"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              placeholder="请选择比赛结束时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="内容" prop="text">
+          <el-input v-model="form.text" type="textarea" placeholder="请输入内容" />
+        </el-form-item>-->
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+  import { listTournament, getTournament, delTournament, addTournament, updateTournament } from "@/api/running/tournament";
+
+  export default {
+    name: "Tournament",
+    dicts: ['sys_start_end'],
+    data() {
+      return {
+        // 遮罩层
+        loading: true,
+        // 选中数组
+        ids: [],
+        // 非单个禁用
+        single: true,
+        // 非多个禁用
+        multiple: true,
+        // 显示搜索条件
+        showSearch: true,
+        // 总条数
+        total: 0,
+        // 比赛管理表格数据
+        tournamentList: [],
+        // 弹出层标题
+        title: "",
+        // 是否显示弹出层
+        open: false,
+        // 查询参数
+        queryParams: {
+          pageNum: 1,
+          pageSize: 10,
+          name: null,
+          registrationTime: null,
+          registrationTimeStart: null,
+          registrationTimeEnd: null,
+          tournamentTime: null,
+          tournamentTimeStart: null,
+          tournamentTimeEnd: null,
+          registrationIs: null,
+          tournamentIs: null,
+          delFlag: null,
+        },
+        // 表单参数
+        form: {},
+        // 表单校验
+        rules: {
+          name: [
+            { required: true, message: "比赛名称不能为空", trigger: "blur" },
+            { min: 1, max: 50,message: '比赛名称在 1 到 50 字之间', trigger: 'blur' },
+          ],
+          maxNumber: [
+            { required: true, message: "最多参赛次数不能为空", trigger: "blur" }
+          ],
+          description: [
+            { required: true, message: "比赛摘要不能为空", trigger: "blur" }
+          ],
+          registrationTime: [
+            { required: true, message: "报名时间不能为空", trigger: "blur" }
+          ],
+          tournamentTime: [
+            { required: true, message: "比赛时间不能为空", trigger: "blur" }
+          ],
+          /*registrationTimeStart: [
+            { required: true, message: "报名开始时间不能为空", trigger: "blur" }
+          ],
+          registrationTimeEnd: [
+            { required: true, message: "报名结束时间不能为空", trigger: "blur" }
+          ],
+          tournamentTimeStart: [
+            { required: true, message: "比赛开始时间不能为空", trigger: "blur" }
+          ],
+          tournamentTimeEnd: [
+            { required: true, message: "比赛结束时间不能为空", trigger: "blur" }
+          ],
+          */
+        }
+      };
+    },
+    created() {
+      this.getList();
+    },
+    methods: {
+      /** 查询比赛管理列表 */
+      getList() {
+        this.loading = true;
+        listTournament(this.queryParams).then(response => {
+          this.tournamentList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+      },
+      // 取消按钮
+      cancel() {
+        this.open = false;
+        this.reset();
+      },
+      // 表单重置
+      reset() {
+        this.form = {
+          id: null,
+          name: null,
+          cover: null,
+          description: null,
+          maxNumber: null,
+          participantsNumber: null,
+          text: null,
+          registrationTime: null,
+          registrationTimeStart: null,
+          registrationTimeEnd: null,
+          tournamentTime: null,
+          tournamentTimeStart: null,
+          tournamentTimeEnd: null,
+          registrationIs: null,
+          tournamentIs: null,
+          delFlag: null,
+          createBy: null,
+          createTime: null,
+          updateBy: null,
+          updateTime: null,
+          remark: null
+        };
+        this.resetForm("form");
+      },
+      /** 搜索按钮操作 */
+      handleQuery() {
+        if(this.queryParams.registrationTime != null){
+          this.queryParams.registrationTimeStart = this.queryParams.registrationTime[0];
+          this.queryParams.registrationTimeEnd = this.queryParams.registrationTime[1] + " 23:59:59";
+        }
+        if(this.queryParams.tournamentTime != null){
+          this.queryParams.tournamentTimeStart = this.queryParams.tournamentTime[0];
+          this.queryParams.tournamentTimeEnd = this.queryParams.tournamentTime[1] + " 23:59:59";
+        }
+        this.queryParams.pageNum = 1;
+        this.getList();
+      },
+      /** 重置按钮操作 */
+      resetQuery() {
+        this.resetForm("queryForm");
+        this.handleQuery();
+      },
+      // 多选框选中数据
+      handleSelectionChange(selection) {
+        this.ids = selection.map(item => item.id)
+        this.single = selection.length!==1
+        this.multiple = !selection.length
+      },
+      /** 新增按钮操作 */
+      handleAdd() {
+        this.reset();
+        this.open = true;
+        this.title = "新增比赛";
+      },
+      /** 修改按钮操作 */
+      handleUpdate(row) {
+        this.reset();
+        const id = row.id || this.ids
+        getTournament(id).then(response => {
+          this.form = response.data;
+          this.$set(this.form,"registrationTime",[this.form.registrationTimeStart, this.form.registrationTimeEnd]);
+          this.$set(this.form,"tournamentTime",[this.form.tournamentTimeStart, this.form.tournamentTimeEnd]);
+
+          // this.form.registrationTime = [this.form.registrationTimeStart, this.form.registrationTimeEnd];
+          // console.log(this.form.registrationTime);
+          // this.form.tournamentTime = [this.form.tournamentTimeStart, this.form.tournamentTimeEnd];
+          this.open = true;
+          this.title = "修改比赛";
+        });
+      },
+      /** 提交按钮 */
+      submitForm() {
+        if(this.form.registrationTime != null){
+          this.form.registrationTimeStart = this.form.registrationTime[0];
+          this.form.registrationTimeEnd = this.form.registrationTime[1];
+        }
+        if(this.form.tournamentTime != null){
+          this.form.tournamentTimeStart = this.form.tournamentTime[0];
+          this.form.tournamentTimeEnd = this.form.tournamentTime[1];
+        }
+        console.log(this.form.registrationTimeStart);
+        console.log(this.form.registrationTimeEnd);
+        this.$refs["form"].validate(valid => {
+          if (valid) {
+            if (this.form.id != null) {
+              updateTournament(this.form).then(response => {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              });
+            } else {
+              addTournament(this.form).then(response => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          }
+        });
+      },
+      /** 删除按钮操作 */
+      handleDelete(row) {
+        const ids = row.id || this.ids;
+        this.$modal.confirm('是否确认删除比赛管理编号为"' + ids + '"的数据项？').then(function() {
+          return delTournament(ids);
+        }).then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        }).catch(() => {});
+      },
+      /** 导出按钮操作 */
+      handleExport() {
+        this.download('running/tournament/export', {
+          ...this.queryParams
+        }, `tournament_${new Date().getTime()}.xlsx`)
+      },
+      /* 打开分组管理页面 */
+      openGroupPage(row) {
+        this.$router.push("/running/tournamentGroup/index/" + row.id);
+      },
+      /* 打开排行榜页面 */
+      openRankPage(row) {
+        this.$router.push("/running/tournamentGroup/rank/" + row.id);
+      }
+
+    }
+  };
+</script>

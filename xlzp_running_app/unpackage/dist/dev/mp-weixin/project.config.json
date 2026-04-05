@@ -1,0 +1,51 @@
+{
+  "description": "项目配置文件。",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": false,
+    "postcss": false,
+    "minified": false,
+    "newFeature": true,
+    "bigPackageSizeSupport": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "minifyWXML": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.3.4",
+  "appid": "wxa7affd470d952715",
+  "projectname": "云跑步",
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "登录",
+          "pathName": "pages/login/index",
+          "query": ""
+        },
+        {
+          "name": "获取详情",
+          "pathName": "pages/run/statement",
+          "query": "id=6"
+        },
+        {
+          "name": "程序设置",
+          "pathName": "pages/setting/index",
+          "query": ""
+        }
+      ]
+    }
+  },
+  "cloudfunctionRoot": "functions/",
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}

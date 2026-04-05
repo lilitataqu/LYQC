@@ -1,0 +1,43 @@
+package com.ueit.running.domain.vo;
+
+import com.ueit.common.annotation.Excel;
+import com.ueit.running.domain.RunInfo;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+//跑步管理-跑步数据
+public class RunInfoDataVo extends RunInfo {
+
+    /** 用户id */
+    @Excel(name = "用户name")
+    private String nickName;
+
+
+    /** 用户id */
+    @Excel(name = "用户deptname")
+    private String deptName;
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("nickName", getId())
+                .append("deptName", getUserId())
+                .toString();
+    }
+}

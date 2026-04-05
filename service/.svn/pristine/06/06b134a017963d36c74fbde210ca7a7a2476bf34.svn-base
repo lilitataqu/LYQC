@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.HomeStatisticMapper">
+
+    <resultMap type="CountStatisticVo" id="CountStatisticVoResult">
+            <result property="num" column="num"/>
+            <result property="date" column="date"/>
+    </resultMap>
+
+
+
+    <select id="selectUserCountListByDate" parameterType="CountStatisticDto" resultMap="CountStatisticVoResult">
+        SELECT
+        d.date,
+        IFNULL( info.count, 0 ) AS num
+        FROM
+        (
+        SELECT
+        DATE_ADD( #{startDate}, INTERVAL CAST( help_topic_id AS signed INTEGER ) DAY ) AS `date`
+        FROM
+        mysql.help_topic
+        WHERE
+        help_topic_id &lt; DATEDIFF( #{endDate}, #{startDate} ) + 1
+        ) AS d
+        LEFT JOIN (
+        SELECT
+        count( * ) AS count,
+        cast( create_time AS date ) AS date
+        FROM
+        run_info r
+        WHERE
+        r.create_time BETWEEN CONCAT( #{startDate}, " 00:00:00" )
+        AND CONCAT( #{endDate}, " 23:59:59" )
+        GROUP BY
+        cast( create_time AS date )
+        ) AS info ON info.date = d.date;
+    </select>
+
+
+</mapper>

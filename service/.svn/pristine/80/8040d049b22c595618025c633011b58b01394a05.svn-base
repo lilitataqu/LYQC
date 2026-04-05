@@ -1,0 +1,89 @@
+package com.ueit.running.service.impl;
+
+import java.util.List;
+        import com.ueit.common.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.ueit.running.mapper.TournamentGroupUserMapper;
+import com.ueit.running.domain.TournamentGroupUser;
+import com.ueit.running.service.ITournamentGroupUserService;
+
+/**
+ * 用户比赛跑步数据Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-11-29
+ */
+@Service
+public class TournamentGroupUserServiceImpl implements ITournamentGroupUserService {
+    @Autowired
+    private TournamentGroupUserMapper tournamentGroupUserMapper;
+
+    /**
+     * 查询用户比赛跑步数据
+     *
+     * @param id 用户比赛跑步数据主键
+     * @return 用户比赛跑步数据
+     */
+    @Override
+    public TournamentGroupUser selectTournamentGroupUserById(Long id) {
+        return tournamentGroupUserMapper.selectTournamentGroupUserById(id);
+    }
+
+    /**
+     * 查询用户比赛跑步数据列表
+     *
+     * @param tournamentGroupUser 用户比赛跑步数据
+     * @return 用户比赛跑步数据
+     */
+    @Override
+    public List<TournamentGroupUser> selectTournamentGroupUserList(TournamentGroupUser tournamentGroupUser) {
+        return tournamentGroupUserMapper.selectTournamentGroupUserList(tournamentGroupUser);
+    }
+
+    /**
+     * 新增用户比赛跑步数据
+     *
+     * @param tournamentGroupUser 用户比赛跑步数据
+     * @return 结果
+     */
+    @Override
+    public int insertTournamentGroupUser(TournamentGroupUser tournamentGroupUser) {
+                    tournamentGroupUser.setCreateTime(DateUtils.getNowDate());
+            return tournamentGroupUserMapper.insertTournamentGroupUser(tournamentGroupUser);
+    }
+
+    /**
+     * 修改用户比赛跑步数据
+     *
+     * @param tournamentGroupUser 用户比赛跑步数据
+     * @return 结果
+     */
+    @Override
+    public int updateTournamentGroupUser(TournamentGroupUser tournamentGroupUser) {
+                    tournamentGroupUser.setUpdateTime(DateUtils.getNowDate());
+        return tournamentGroupUserMapper.updateTournamentGroupUser(tournamentGroupUser);
+    }
+
+    /**
+     * 批量删除用户比赛跑步数据
+     *
+     * @param ids 需要删除的用户比赛跑步数据主键
+     * @return 结果
+     */
+    @Override
+    public int deleteTournamentGroupUserByIds(Long[]ids) {
+        return tournamentGroupUserMapper.deleteTournamentGroupUserByIds(ids);
+    }
+
+    /**
+     * 删除用户比赛跑步数据信息
+     *
+     * @param id 用户比赛跑步数据主键
+     * @return 结果
+     */
+    @Override
+    public int deleteTournamentGroupUserById(Long id) {
+        return tournamentGroupUserMapper.deleteTournamentGroupUserById(id);
+    }
+}

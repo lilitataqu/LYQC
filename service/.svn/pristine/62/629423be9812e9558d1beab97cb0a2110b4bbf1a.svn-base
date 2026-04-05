@@ -1,0 +1,90 @@
+package com.ueit.system.service.impl;
+
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSONObject;
+import com.ueit.common.utils.DateUtils;
+import com.ueit.common.utils.StringUtils;
+import com.ueit.common.utils.http.HttpUtils;
+import com.ueit.common.utils.http.OkHttpUtils;
+import com.ueit.system.constant.WxUrl;
+import com.ueit.system.domain.SysConfig;
+import com.ueit.system.domain.dto.wx.GetUserPhoneNumber;
+import com.ueit.system.domain.dto.wx.GetUserPhoneNumberParams;
+import com.ueit.system.service.ISysConfigService;
+import com.ueit.system.service.WxApiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
+/**
+ * 微信API业务层处理
+ *
+ * @author douwq
+ * @date 2022-07-11
+ */
+@Component("wxApi")
+@Service
+public class WxApiServiceImpl implements WxApiService
+{
+    private static final Logger log = LoggerFactory.getLogger(WxApiServiceImpl.class);
+
+    @Autowired
+    private ISysConfigService configService;
+
+    /**
+     * 获取微信token
+     */
+    @Override
+    public String getToken() {
+        String res = "";
+        SysConfig sysConfig = configService.selectConfigById(8L);
+        String appid = configService.selectConfigByKey("ueit.app.appid");
+        String secret = configService.selectConfigByKey("ueit.app.secret");
+        long gap = DateUtils.getNowDate().getTime() - (sysConfig.getUpdateTime() != null ? sysConfig.getUpdateTime().getTime() : 0L);
+        if(gap > 6500000){
+            res = HttpUtils.sendGet(WxUrl.GET_TOKEN, "grant_type=client_credential&appid=" + appid + "&secret=" + secret);
+            if(StringUtils.isNotEmpty(res)){
+                JSONObject jsonObject = JSONObject.parseObject(res);
+                String access_token = jsonObject.getString("access_token");
+                if(access_token != null){
+                    sysConfig.setConfigValue(access_token);
+                    configService.updateConfig(sysConfig);
+
+                    return access_token;
+                }
+            }
+        }else{
+            return sysConfig.getConfigValue();
+        }
+        log.error("获取微信token失败:{}", res);
+        return null;
+    }
+
+    /**
+     * 获取微信用户手机号
+     * @param getUserPhoneNumberParams 获取手机号所需code
+     * @return 不带区号的手机号
+     */
+    @Override
+    public String getUserPhone(GetUserPhoneNumberParams getUserPhoneNumberParams) {
+        String token = getToken();
+        System.out.println("获取到的token");
+        try {
+            String url = WxUrl.GET_PHONE_NUMBER + "?access_token=" + token;
+            String s = OkHttpUtils.getInstance().postJson(url, JSONObject.toJSONString(getUserPhoneNumberParams));
+            System.out.println("获取手机号返回值" + s);
+            GetUserPhoneNumber getUserPhoneNumber = JSONObject.parseObject(s, GetUserPhoneNumber.class);
+            if(getUserPhoneNumber.getErrcode() == WxUrl.API_SECCESS){
+                return getUserPhoneNumber.getPhone_info().getPurePhoneNumber();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}

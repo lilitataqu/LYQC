@@ -1,0 +1,31 @@
+package com.ueit.running.service;
+
+import java.util.List;
+
+import com.ueit.running.domain.vo.HomePageSumVo;
+import com.ueit.running.domain.vo.UserWeekStatistic;
+import com.ueit.running.domain.dto.UserWeekStatisticDto;
+
+/**
+ * 本周各学员运动量Service接口
+ *
+ * @author douwq
+ * @date 2022-08-01
+ */
+public interface IUserWeekStatisticService {
+
+    /**
+     * 查询本周各学员运动量列表
+     *
+     * @param userWeekStatisticDto 查询参数
+     * @return 本周各学员运动量集合
+     */
+    public List<UserWeekStatistic> selectUserWeekStatisticList(UserWeekStatisticDto userWeekStatisticDto);
+
+    /**
+     * 查询本周运动量总和
+     * @return
+     */
+    public int selectWeekDistanceSum();
+
+}

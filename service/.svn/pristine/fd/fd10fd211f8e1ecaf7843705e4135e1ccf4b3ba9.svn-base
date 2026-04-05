@@ -1,0 +1,84 @@
+package
+
+        com.ueit.system.service;
+
+import java.util.List;
+
+import com.ueit.common.core.domain.entity.SysUser;
+import com.ueit.system.domain.ClassHour;
+import com.ueit.system.domain.dto.AppClassTracherListDto;
+
+/**
+ * 课程信息Service接口
+ *
+ * @author douwq
+ * @date 2022-10-09
+ */
+public interface IClassHourService {
+    /**
+     * 查询课程信息
+     *
+     * @param id 课程信息主键
+     * @return 课程信息
+     */
+    public ClassHour selectClassHourById(Long id);
+
+    /**
+     * 查询课程信息列表
+     *
+     * @param classHour 课程信息
+     * @return 课程信息集合
+     */
+    public List<ClassHour> selectClassHourList(ClassHour classHour);
+
+    /**
+     * 新增课程信息
+     *
+     * @param classHour 课程信息
+     * @return 结果
+     */
+    public int insertClassHour(ClassHour classHour);
+
+    /**
+     * 修改课程信息
+     *
+     * @param classHour 课程信息
+     * @return 结果
+     */
+    public int updateClassHour(ClassHour classHour);
+
+    /**
+     * 批量删除课程信息
+     *
+     * @param ids 需要删除的课程信息主键集合
+     * @return 结果
+     */
+    public int deleteClassHourByIds(Long[] ids);
+
+    /**
+     * 删除课程信息信息
+     *
+     * @param id 课程信息主键
+     * @return 结果
+     */
+    public int deleteClassHourById(Long id);
+
+    /**
+     * 根据星期与课程时间查询老师
+     * @param appClassTracherListDto
+     * @return
+     */
+    public List<ClassHour> selectTeacherByWeekAndClassHour(AppClassTracherListDto appClassTracherListDto);
+
+    /**
+     * 查询登录用户绑定的教师与课时
+     * @return
+     */
+    public ClassHour selectClassHourByUserId();
+
+    /**
+     * 查询当前登录老师的所有课程
+     * @return
+     */
+    public List<ClassHour> getClassHourByUserId();
+}

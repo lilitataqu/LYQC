@@ -1,0 +1,61 @@
+package com.ueit.running.mapper;
+
+import java.util.List;
+import com.ueit.running.domain.RunInfo;
+
+/**
+ * 跑步信息Mapper接口
+ * 
+ * @author douwq
+ * @date 2022-07-07
+ */
+public interface RunInfoMapper 
+{
+    /**
+     * 查询跑步信息
+     * 
+     * @param id 跑步信息主键
+     * @return 跑步信息
+     */
+    public RunInfo selectRunInfoById(Long id);
+
+    /**
+     * 查询跑步信息列表
+     * 
+     * @param runInfo 跑步信息
+     * @return 跑步信息集合
+     */
+    public List<RunInfo> selectRunInfoList(RunInfo runInfo);
+
+    /**
+     * 新增跑步信息
+     * 
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    public int insertRunInfo(RunInfo runInfo);
+
+    /**
+     * 修改跑步信息
+     * 
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    public int updateRunInfo(RunInfo runInfo);
+
+    /**
+     * 删除跑步信息
+     * 
+     * @param id 跑步信息主键
+     * @return 结果
+     */
+    public int deleteRunInfoById(Long id);
+
+    /**
+     * 批量删除跑步信息
+     * 
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteRunInfoByIds(Long[] ids);
+}

@@ -1,0 +1,89 @@
+package com.ueit.running.service.impl;
+
+import java.util.List;
+        import com.ueit.common.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.ueit.running.mapper.TournamentMapper;
+import com.ueit.running.domain.Tournament;
+import com.ueit.running.service.ITournamentService;
+
+/**
+ * 比赛管理Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-11-29
+ */
+@Service
+public class TournamentServiceImpl implements ITournamentService {
+    @Autowired
+    private TournamentMapper tournamentMapper;
+
+    /**
+     * 查询比赛管理
+     *
+     * @param id 比赛管理主键
+     * @return 比赛管理
+     */
+    @Override
+    public Tournament selectTournamentById(Long id) {
+        return tournamentMapper.selectTournamentById(id);
+    }
+
+    /**
+     * 查询比赛管理列表
+     *
+     * @param tournament 比赛管理
+     * @return 比赛管理
+     */
+    @Override
+    public List<Tournament> selectTournamentList(Tournament tournament) {
+        return tournamentMapper.selectTournamentList(tournament);
+    }
+
+    /**
+     * 新增比赛管理
+     *
+     * @param tournament 比赛管理
+     * @return 结果
+     */
+    @Override
+    public int insertTournament(Tournament tournament) {
+                    tournament.setCreateTime(DateUtils.getNowDate());
+            return tournamentMapper.insertTournament(tournament);
+    }
+
+    /**
+     * 修改比赛管理
+     *
+     * @param tournament 比赛管理
+     * @return 结果
+     */
+    @Override
+    public int updateTournament(Tournament tournament) {
+                    tournament.setUpdateTime(DateUtils.getNowDate());
+        return tournamentMapper.updateTournament(tournament);
+    }
+
+    /**
+     * 批量删除比赛管理
+     *
+     * @param ids 需要删除的比赛管理主键
+     * @return 结果
+     */
+    @Override
+    public int deleteTournamentByIds(Long[]ids) {
+        return tournamentMapper.deleteTournamentByIds(ids);
+    }
+
+    /**
+     * 删除比赛管理信息
+     *
+     * @param id 比赛管理主键
+     * @return 结果
+     */
+    @Override
+    public int deleteTournamentById(Long id) {
+        return tournamentMapper.deleteTournamentById(id);
+    }
+}

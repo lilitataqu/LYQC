@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.TournamentMapper">
+
+    <resultMap type="Tournament" id="TournamentResult">
+            <result property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="cover" column="cover"/>
+            <result property="description" column="description"/>
+            <result property="participantsNumber" column="participants_number"/>
+            <result property="text" column="text"/>
+            <result property="registrationTimeStart" column="registration_time_start"/>
+            <result property="registrationTimeEnd" column="registration_time_end"/>
+            <result property="tournamentTimeStart" column="tournament_time_start"/>
+            <result property="tournamentTimeEnd" column="tournament_time_end"/>
+            <result property="registrationIs" column="registration_is"/>
+            <result property="tournamentIs" column="tournament_is"/>
+            <result property="delFlag" column="del_flag"/>
+            <result property="createBy" column="create_by"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateBy" column="update_by"/>
+            <result property="updateTime" column="update_time"/>
+            <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectTournamentVo">
+        select id, name, cover, description, participants_number, text, registration_time_start, registration_time_end, tournament_time_start, tournament_time_end, registration_is, tournament_is, del_flag, create_by, create_time, update_by, update_time, remark
+        from tb_tournament
+    </sql>
+
+    <select id="selectTournamentList" parameterType="Tournament" resultMap="TournamentResult">
+        <include refid="selectTournamentVo"/>
+        <where>
+                        <if test="name != null  and name != ''">
+                            and name like concat('%', #{name}, '%')
+                        </if>
+                        <if test="registrationTimeStart != null ">
+                            and registration_time_start = #{registrationTimeStart}
+                        </if>
+                        <if test="registrationTimeEnd != null ">
+                            and registration_time_end = #{registrationTimeEnd}
+                        </if>
+                        <if test="tournamentTimeStart != null ">
+                            and tournament_time_start = #{tournamentTimeStart}
+                        </if>
+                        <if test="tournamentTimeEnd != null ">
+                            and tournament_time_end = #{tournamentTimeEnd}
+                        </if>
+                        <if test="registrationIs != null ">
+                            and registration_is = #{registrationIs}
+                        </if>
+                        <if test="tournamentIs != null ">
+                            and tournament_is = #{tournamentIs}
+                        </if>
+                        <if test="delFlag != null  and delFlag != ''">
+                            and del_flag = #{delFlag}
+                        </if>
+        </where>
+    </select>
+
+    <select id="selectTournamentById" parameterType="Long"
+            resultMap="TournamentResult">
+            <include refid="selectTournamentVo"/>
+            where id = #{id}
+    </select>
+
+    <insert id="insertTournament" parameterType="Tournament">
+        insert into tb_tournament
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="id != null">id,
+                    </if>
+                    <if test="name != null and name != ''">name,
+                    </if>
+                    <if test="cover != null">cover,
+                    </if>
+                    <if test="description != null and description != ''">description,
+                    </if>
+                    <if test="participantsNumber != null">participants_number,
+                    </if>
+                    <if test="text != null">text,
+                    </if>
+                    <if test="registrationTimeStart != null">registration_time_start,
+                    </if>
+                    <if test="registrationTimeEnd != null">registration_time_end,
+                    </if>
+                    <if test="tournamentTimeStart != null">tournament_time_start,
+                    </if>
+                    <if test="tournamentTimeEnd != null">tournament_time_end,
+                    </if>
+                    <if test="registrationIs != null">registration_is,
+                    </if>
+                    <if test="tournamentIs != null">tournament_is,
+                    </if>
+                    <if test="delFlag != null">del_flag,
+                    </if>
+                    <if test="createBy != null">create_by,
+                    </if>
+                    <if test="createTime != null">create_time,
+                    </if>
+                    <if test="updateBy != null">update_by,
+                    </if>
+                    <if test="updateTime != null">update_time,
+                    </if>
+                    <if test="remark != null">remark,
+                    </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="id != null">#{id},
+                    </if>
+                    <if test="name != null and name != ''">#{name},
+                    </if>
+                    <if test="cover != null">#{cover},
+                    </if>
+                    <if test="description != null and description != ''">#{description},
+                    </if>
+                    <if test="participantsNumber != null">#{participantsNumber},
+                    </if>
+                    <if test="text != null">#{text},
+                    </if>
+                    <if test="registrationTimeStart != null">#{registrationTimeStart},
+                    </if>
+                    <if test="registrationTimeEnd != null">#{registrationTimeEnd},
+                    </if>
+                    <if test="tournamentTimeStart != null">#{tournamentTimeStart},
+                    </if>
+                    <if test="tournamentTimeEnd != null">#{tournamentTimeEnd},
+                    </if>
+                    <if test="registrationIs != null">#{registrationIs},
+                    </if>
+                    <if test="tournamentIs != null">#{tournamentIs},
+                    </if>
+                    <if test="delFlag != null">#{delFlag},
+                    </if>
+                    <if test="createBy != null">#{createBy},
+                    </if>
+                    <if test="createTime != null">#{createTime},
+                    </if>
+                    <if test="updateBy != null">#{updateBy},
+                    </if>
+                    <if test="updateTime != null">#{updateTime},
+                    </if>
+                    <if test="remark != null">#{remark},
+                    </if>
+        </trim>
+    </insert>
+
+    <update id="updateTournament" parameterType="Tournament">
+        update tb_tournament
+        <trim prefix="SET" suffixOverrides=",">
+                    <if test="name != null and name != ''">name =
+                        #{name},
+                    </if>
+                    <if test="cover != null">cover =
+                        #{cover},
+                    </if>
+                    <if test="description != null and description != ''">description =
+                        #{description},
+                    </if>
+                    <if test="participantsNumber != null">participants_number =
+                        #{participantsNumber},
+                    </if>
+                    <if test="text != null">text =
+                        #{text},
+                    </if>
+                    <if test="registrationTimeStart != null">registration_time_start =
+                        #{registrationTimeStart},
+                    </if>
+                    <if test="registrationTimeEnd != null">registration_time_end =
+                        #{registrationTimeEnd},
+                    </if>
+                    <if test="tournamentTimeStart != null">tournament_time_start =
+                        #{tournamentTimeStart},
+                    </if>
+                    <if test="tournamentTimeEnd != null">tournament_time_end =
+                        #{tournamentTimeEnd},
+                    </if>
+                    <if test="registrationIs != null">registration_is =
+                        #{registrationIs},
+                    </if>
+                    <if test="tournamentIs != null">tournament_is =
+                        #{tournamentIs},
+                    </if>
+                    <if test="delFlag != null">del_flag =
+                        #{delFlag},
+                    </if>
+                    <if test="createBy != null">create_by =
+                        #{createBy},
+                    </if>
+                    <if test="createTime != null">create_time =
+                        #{createTime},
+                    </if>
+                    <if test="updateBy != null">update_by =
+                        #{updateBy},
+                    </if>
+                    <if test="updateTime != null">update_time =
+                        #{updateTime},
+                    </if>
+                    <if test="remark != null">remark =
+                        #{remark},
+                    </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTournamentById" parameterType="Long">
+        delete from tb_tournament where id = #{id}
+    </delete>
+
+    <delete id="deleteTournamentByIds" parameterType="String">
+        delete from tb_tournament where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

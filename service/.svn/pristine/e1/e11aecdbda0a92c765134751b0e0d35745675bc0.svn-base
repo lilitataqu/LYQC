@@ -1,0 +1,118 @@
+package
+
+        com.ueit.system.service.impl;
+
+import java.util.List;
+
+import com.ueit.common.constant.SystemConfigKeyConstants;
+import com.ueit.common.core.domain.entity.SysUser;
+import com.ueit.common.utils.SecurityUtils;
+import com.ueit.system.domain.dto.AppClassTracherListDto;
+import com.ueit.system.service.ISysConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.ueit.system.mapper.ClassHourMapper;
+import com.ueit.system.domain.ClassHour;
+import com.ueit.system.service.IClassHourService;
+
+/**
+ * 课程信息Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-10-09
+ */
+@Service
+public class ClassHourServiceImpl implements IClassHourService {
+    @Autowired
+    private ClassHourMapper classHourMapper;
+    @Autowired
+    private ISysConfigService configService;
+
+    /**
+     * 查询课程信息
+     *
+     * @param id 课程信息主键
+     * @return 课程信息
+     */
+    @Override
+    public ClassHour selectClassHourById(Long id) {
+        return classHourMapper.selectClassHourById(id);
+    }
+
+    /**
+     * 查询课程信息列表
+     *
+     * @param classHour 课程信息
+     * @return 课程信息
+     */
+    @Override
+    public List<ClassHour> selectClassHourList(ClassHour classHour) {
+        return classHourMapper.selectClassHourList(classHour);
+    }
+
+    /**
+     * 新增课程信息
+     *
+     * @param classHour 课程信息
+     * @return 结果
+     */
+    @Override
+    public int insertClassHour(ClassHour classHour) {
+            return classHourMapper.insertClassHour(classHour);
+    }
+
+    /**
+     * 修改课程信息
+     *
+     * @param classHour 课程信息
+     * @return 结果
+     */
+    @Override
+    public int updateClassHour(ClassHour classHour) {
+        return classHourMapper.updateClassHour(classHour);
+    }
+
+    /**
+     * 批量删除课程信息
+     *
+     * @param ids 需要删除的课程信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteClassHourByIds(Long[]ids) {
+        return classHourMapper.deleteClassHourByIds(ids);
+    }
+
+    /**
+     * 删除课程信息信息
+     *
+     * @param id 课程信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteClassHourById(Long id) {
+        return classHourMapper.deleteClassHourById(id);
+    }
+
+    /**
+     * 根据星期与课程时间查询老师
+     * @param appClassTracherListDto
+     * @return
+     */
+    @Override
+    public List<ClassHour> selectTeacherByWeekAndClassHour(AppClassTracherListDto appClassTracherListDto) {
+        String classSemester = configService.selectConfigByKey(SystemConfigKeyConstants.CLASS_SEMESTER);
+        appClassTracherListDto.setSemester(classSemester);
+        return classHourMapper.selectTeacherByWeekAndClassHour(appClassTracherListDto);
+    }
+
+    @Override
+    public ClassHour selectClassHourByUserId() {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        String classSemester = configService.selectConfigByKey(SystemConfigKeyConstants.CLASS_SEMESTER);
+        ClassHour classHour = new ClassHour();
+        classHour.setUserId(user.getUserId());
+        classHour.setSemester(classSemester);
+        return classHourMapper.selectClassHourByUserId(classHour);
+    }
+}

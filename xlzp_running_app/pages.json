@@ -1,0 +1,205 @@
+{
+	"pages": [{
+			"path": "pages/index/index",
+			"style": {}
+		},
+		{
+			"path": "pages/setting/index",
+			"style": {}
+		},
+		{
+			"path": "pages/me/index",
+			"style": {}
+		},
+		{
+			"path": "pages/history/index",
+			"style": {}
+		},
+		{
+			"path": "pages/history/detail",
+			"style": {}
+		},
+		{
+			"path": "pages/aboutus/index",
+			"style": {}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {}
+		},
+		{
+			"path": "pages/login/setting",
+			"style": {}
+		},
+		{
+			"path": "pages/share/index",
+			"style": {}
+		},
+		{
+			"path": "pages/bmi/index",
+			"style": {}
+		}
+        ,
+		{
+			"path": "pages/rank/rank",
+			"style" :
+			{
+			    "navigationBarTitleText": "排行榜",
+			    "enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/game/game",
+			"style":
+			{
+			    "navigationBarTitleText": "比赛",
+			    "enablePullDownRefresh": false
+			}
+		}
+        ,{
+            "path" : "pages/game/gameName",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "比赛名称",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/game/gameApply",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "比赛报名",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/game/my_game",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的比赛"
+            }
+            
+        }
+        ,{
+            "path" : "pages/game/gameRank",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "比赛排行",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	"condition": { //编译模式配置，仅开发期间生效  
+		"current": 3, //当前激活的编译模式（list 的索引项）  
+		"list": [{
+			"name": "登录", //模式名称
+			"path": "pages/login/index", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到。
+		}, {
+			"name": "获取详情", //模式名称
+			"path": "pages/run/statement", //启动页面，必选
+			"query": "id=6" //启动参数，在页面的onLoad函数里面得到。
+		}, {
+			"name": "程序设置", //模式名称
+			"path": "pages/setting/index", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到。
+		}]
+	},
+	"tabBar": {
+		"backgroundColor": "@tabBarBackgroundColor",
+		"borderStyle": "white",
+		"selectedColor": "@tabBarSelectedColor",
+		"color": "@tabBarColor",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "跑步",
+				"selectedIconPath": "/static/icon/run.png",
+				"iconPath": "static/icon/run-sub.png"
+			},
+			{
+				"pagePath": "pages/rank/rank",
+				"text": "排行榜",
+				"selectedIconPath": "/static/icon/runList.png",
+				"iconPath": "static/icon/runList-sub.png"
+			},
+			{
+				"pagePath": "pages/game/game",
+				"text": "比赛",
+				"selectedIconPath": "/static/icon/game.png",
+				"iconPath": "static/icon/game_sub.png"
+			},
+			{
+				"pagePath": "pages/me/index",
+				"text": "我",
+				"selectedIconPath": "/static/icon/person-2.png",
+				"iconPath": "static/icon/person-sub.png"
+			}
+		]
+	},
+	"permission": {
+		"scope.userLocation": {
+			"desc": "您的位置信息将用于绘制您的运动轨迹"
+		}
+		// "scope.userLocationBackend": {
+		// 	"desc": "您的位置信息将用于绘制您的运动轨迹"
+		// },
+		// "scope.writePhotosAlbum": {
+		// 	"desc": "您的相册授权仅用于保存您的运动海报"
+		// }
+	},
+	"darkmode": false,
+	"themeLocation": "theme.json",
+	"cloud": true,
+	"requiredBackgroundModes": [
+		"location"
+	],
+	"sitemapLocation": "sitemap.json",
+	"globalStyle": {
+		"backgroundTextStyle": "light",
+		"navigationBarBackgroundColor": "@navBgColor",
+		"navigationBarTextStyle": "@navTxtStyle",
+		"navigationBarTitleText": "云跑步"
+	},
+	"subPackages": [
+		{
+			"root": "page_run",
+			"pages": [
+				{
+					"path": "index",
+					"style": {}
+				},
+				{
+					"path": "index_new_algorithm",
+					"style" :
+					{
+					    "navigationBarTitleText": "跑步",
+					    "enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "statement",
+					"style": {}
+				},
+				{
+					"path": "statement_tournament",
+					"style": {}
+				}
+			    ,{
+                    "path" : "distance/distance",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
+		}
+	],
+	"requiredPrivateInfos": [
+		"onLocationChange"
+	]
+}

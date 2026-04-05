@@ -1,0 +1,112 @@
+package com.ueit.running.service.impl;
+
+import java.util.List;
+import com.ueit.common.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.ueit.running.mapper.RunInfoMapper;
+import com.ueit.running.domain.RunInfo;
+import com.ueit.running.service.IRunInfoService;
+
+/**
+ * 跑步信息Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-07-07
+ */
+@Service
+public class RunInfoServiceImpl implements IRunInfoService
+{
+    @Autowired
+    private RunInfoMapper runInfoMapper;
+
+    /**
+     * 查询跑步信息
+     *
+     * @param id 跑步信息主键
+     * @return 跑步信息
+     */
+    @Override
+    public RunInfo selectRunInfoById(Long id)
+    {
+        return runInfoMapper.selectRunInfoById(id);
+    }
+
+    /**
+     * 查询跑步信息列表
+     *
+     * @param runInfo 跑步信息
+     * @return 跑步信息
+     */
+    @Override
+    public List<RunInfo> selectRunInfoList(RunInfo runInfo)
+    {
+        return runInfoMapper.selectRunInfoList(runInfo);
+    }
+
+    /**
+     * 新增跑步信息
+     *
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    @Override
+    public int insertRunInfo(RunInfo runInfo)
+    {
+        runInfo.setCreateTime(DateUtils.getNowDate());
+        return runInfoMapper.insertRunInfo(runInfo);
+    }
+
+    /**
+     * 修改跑步信息
+     *
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    @Override
+    public int updateRunInfo(RunInfo runInfo)
+    {
+        runInfo.setUpdateTime(DateUtils.getNowDate());
+        return runInfoMapper.updateRunInfo(runInfo);
+    }
+
+    /**
+     * 批量删除跑步信息
+     *
+     * @param ids 需要删除的跑步信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteRunInfoByIds(Long[] ids)
+    {
+        return runInfoMapper.deleteRunInfoByIds(ids);
+    }
+
+    /**
+     * 删除跑步信息信息
+     *
+     * @param id 跑步信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteRunInfoById(Long id)
+    {
+        return runInfoMapper.deleteRunInfoById(id);
+    }
+
+    /**
+     * 统计用户本周卡路里与里程总数据
+     * @param userId 用户id/upload
+     * @return
+     */
+    @Override
+    public RunInfo sumInfoByUser(Long userId){
+        RunInfo runInfo = runInfoMapper.sumInfoByUser(userId);
+        if(runInfo == null){
+            runInfo = new RunInfo();
+            runInfo.setDistance(0L);
+            runInfo.setKcal(0L);
+        }
+        return runInfo;
+    }
+}

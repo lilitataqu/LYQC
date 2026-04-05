@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.system.mapper.ClassHourUserMapper">
+
+    <resultMap type="ClassHourUser" id="ClassHourUserResult">
+            <result property="userId" column="user_id"/>
+            <result property="classId" column="class_id"/>
+    </resultMap>
+
+    <sql id="selectClassHourUserVo">
+        select user_id, class_id
+        from tb_class_hour_user
+    </sql>
+
+    <select id="selectClassHourUserList" parameterType="ClassHourUser" resultMap="ClassHourUserResult">
+        <include refid="selectClassHourUserVo"/>
+        <where>
+        </where>
+    </select>
+
+    <select id="selectClassHourUserByUserId" parameterType="Long"
+            resultMap="ClassHourUserResult">
+            <include refid="selectClassHourUserVo"/>
+            where user_id = #{userId}
+    </select>
+
+    <insert id="insertClassHourUser" parameterType="ClassHourUser">
+        insert into tb_class_hour_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="userId != null">user_id,
+                    </if>
+                    <if test="classId != null">class_id,
+                    </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="userId != null">#{userId},
+                    </if>
+                    <if test="classId != null">#{classId},
+                    </if>
+        </trim>
+    </insert>
+
+    <update id="updateClassHourUser" parameterType="ClassHourUser">
+        update tb_class_hour_user
+        <trim prefix="SET" suffixOverrides=",">
+                    <if test="classId != null">class_id =
+                        #{classId},
+                    </if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteClassHourUserByUserId" parameterType="Long">
+        delete from tb_class_hour_user where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteClassHourUserByUserIds" parameterType="String">
+        delete from tb_class_hour_user where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+</mapper>

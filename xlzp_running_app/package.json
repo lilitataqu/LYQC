@@ -1,0 +1,18 @@
+{
+    "id": "bing-countup",
+    "name": "countup计时器",
+    "version": "v-1.1",
+    "description": "轻量级计时器组件，适合刷题计时等多数场景",
+    "keywords": [
+        "计时器"
+    ],
+    "dcloudext": {
+        "category": [
+            "前端组件",
+            "通用组件"
+        ]
+    },
+    "dependencies": {
+        "axios": "^0.27.2"
+    }
+}

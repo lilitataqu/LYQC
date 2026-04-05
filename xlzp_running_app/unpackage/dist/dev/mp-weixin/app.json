@@ -1,0 +1,98 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/setting/index",
+    "pages/me/index",
+    "pages/history/index",
+    "pages/history/detail",
+    "pages/aboutus/index",
+    "pages/login/index",
+    "pages/login/setting",
+    "pages/share/index",
+    "pages/bmi/index",
+    "pages/rank/rank",
+    "pages/game/game",
+    "pages/game/gameName",
+    "pages/game/gameApply",
+    "pages/game/my_game",
+    "pages/game/gameRank"
+  ],
+  "subPackages": [
+    {
+      "root": "page_run",
+      "pages": [
+        "index",
+        "index_new_algorithm",
+        "statement",
+        "statement_tournament",
+        "distance/distance"
+      ]
+    }
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "@navBgColor",
+    "navigationBarTextStyle": "@navTxtStyle",
+    "navigationBarTitleText": "云跑步"
+  },
+  "tabBar": {
+    "backgroundColor": "@tabBarBackgroundColor",
+    "borderStyle": "white",
+    "selectedColor": "@tabBarSelectedColor",
+    "color": "@tabBarColor",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "跑步",
+        "selectedIconPath": "/static/icon/run.png",
+        "iconPath": "static/icon/run-sub.png"
+      },
+      {
+        "pagePath": "pages/rank/rank",
+        "text": "排行榜",
+        "selectedIconPath": "/static/icon/runList.png",
+        "iconPath": "static/icon/runList-sub.png"
+      },
+      {
+        "pagePath": "pages/game/game",
+        "text": "比赛",
+        "selectedIconPath": "/static/icon/game.png",
+        "iconPath": "static/icon/game_sub.png"
+      },
+      {
+        "pagePath": "pages/me/index",
+        "text": "我",
+        "selectedIconPath": "/static/icon/person-2.png",
+        "iconPath": "static/icon/person-sub.png"
+      }
+    ]
+  },
+  "themeLocation": "theme.json",
+  "permission": {
+    "scope.userLocationBackend": {
+      "desc": "您的位置信息将用于绘制您的运动轨迹"
+    },
+    "scope.writePhotosAlbum": {
+      "desc": "您的相册授权仅用于保存您的运动海报"
+    },
+    "scope.userLocation": {
+      "desc": "跑步记录"
+    }
+  },
+  "plugins": {},
+  "requiredBackgroundModes": [
+    "audio",
+    "location"
+  ],
+  "requiredPrivateInfos": [
+    "chooseAddress",
+    "chooseLocation",
+    "choosePoi",
+    "getLocation",
+    "onLocationChange",
+    "startLocationUpdateBackground",
+    "startLocationUpdate"
+  ],
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {}
+}

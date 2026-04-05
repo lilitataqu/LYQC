@@ -1,0 +1,43 @@
+package com.ueit.running.service.impl;
+
+import java.util.List;
+
+import com.ueit.running.domain.dto.UserWeekStatisticDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.ueit.running.mapper.UserWeekStatisticMapper;
+import com.ueit.running.domain.vo.UserWeekStatistic;
+import com.ueit.running.service.IUserWeekStatisticService;
+
+/**
+ * 本周各学员运动量Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-08-01
+ */
+@Service
+public class UserWeekStatisticServiceImpl implements IUserWeekStatisticService {
+    @Autowired
+    private UserWeekStatisticMapper userWeekStatisticMapper;
+
+    /**
+     * 查询本周各学员运动量列表
+     *
+     * @param userWeekStatisticDto 查询参数
+     * @return 本周各学员运动量
+     */
+    @Override
+    public List<UserWeekStatistic> selectUserWeekStatisticList(UserWeekStatisticDto userWeekStatisticDto) {
+        return userWeekStatisticMapper.selectUserWeekStatisticList(userWeekStatisticDto);
+    }
+
+    /**
+     * 查询本周运动量总和
+     * @return
+     */
+    @Override
+    public int selectWeekDistanceSum() {
+        return userWeekStatisticMapper.selectWeekDistanceSum();
+    }
+
+}

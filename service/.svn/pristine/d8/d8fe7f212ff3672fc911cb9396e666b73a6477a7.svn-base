@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.RunInfoDataMapper">
+
+    <resultMap type="RunInfoDataVo" id="RunInfoDataResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="studentId"    column="student_id"    />
+<!--        <result property="userName"    column="user_name"    />-->
+        <result property="nickName"    column="nick_name"    />
+<!--        <result property="userDeptname"    column="user_deptname"    />-->
+        <result property="deptName"    column="dept_name"    />
+        <result property="time"    column="time"    />
+        <result property="speed"    column="speed"    />
+        <result property="kcal"    column="kcal"    />
+        <result property="distance"    column="distance"    />
+        <result property="kmSpeed"    column="km_speed"    />
+        <result property="points"    column="points"    />
+        <result property="altitude"    column="altitude"    />
+        <result property="altitudeSum"    column="altitude_sum"    />
+        <result property="runType"    column="run_type"    />
+        <result property="step"    column="step"    />
+        <result property="state"    column="state"    />
+        <result property="delState"    column="del_state"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+
+    <select id="selectRunInfoList" parameterType="RunInfoDataVo" resultMap="RunInfoDataResult">
+        select r.id, u.student_id, u.nick_name,d.dept_name, r.user_id, r.time, r.speed, r.kcal, r.distance, r.km_speed, r.altitude, r.altitude_sum, r.run_type, r.state, r.del_state, r.create_by, r.create_time, r.update_by, r.update_time
+        from run_info r
+        join  sys_user u ON r.user_id=u.user_id
+        join  sys_dept d ON u.dept_id=d.dept_id
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="runType != null "> and run_type = #{runType}</if>
+            and del_state = 0
+        </where>
+        order by id desc
+    </select>
+
+
+
+</mapper>

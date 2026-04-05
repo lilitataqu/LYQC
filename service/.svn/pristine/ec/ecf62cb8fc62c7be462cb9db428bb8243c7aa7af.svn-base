@@ -1,0 +1,174 @@
+package com.ueit.running.service.impl;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalTime;
+import java.util.List;
+
+import com.alibaba.fastjson2.JSON;
+import com.ueit.common.core.domain.entity.SysUser;
+import com.ueit.common.utils.DateUtils;
+import com.ueit.common.utils.SecurityUtils;
+import com.ueit.running.domain.dos.RunPaceConfig;
+import com.ueit.running.domain.dos.RunPaceData;
+import com.ueit.running.domain.vo.StatisticSumHomeVo;
+import com.ueit.system.service.ISysConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.ueit.running.mapper.RunInfoMapper;
+import com.ueit.running.domain.RunInfo;
+import com.ueit.running.service.IRunInfoService;
+import com.ueit.common.constant.RunStsteConstants;
+
+/**
+ * 跑步信息Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-07-07
+ */
+@Service
+public class RunInfoServiceImpl implements IRunInfoService
+{
+    @Autowired
+    private RunInfoMapper runInfoMapper;
+    @Autowired
+    private ISysConfigService configService;
+
+    /**
+     * 查询跑步信息
+     *
+     * @param id 跑步信息主键
+     * @return 跑步信息
+     */
+    @Override
+    public RunInfo selectRunInfoById(Long id)
+    {
+        return runInfoMapper.selectRunInfoById(id);
+    }
+
+    /**
+     * 查询跑步信息列表
+     *
+     * @param runInfo 跑步信息
+     * @return 跑步信息
+     */
+    @Override
+    public List<RunInfo> selectRunInfoList(RunInfo runInfo)
+    {
+        return runInfoMapper.selectRunInfoList(runInfo);
+    }
+
+    /**
+     * 新增跑步信息
+     *
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    @Override
+    public int insertRunInfo(RunInfo runInfo)
+    {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+
+        // 判断该条跑步数据是否有效
+        String sex = user.getSex();
+        String standardDistance = configService.selectConfigByKey("ueit.run.distance");
+
+        // 判断距离是否达标
+        if((runInfo.getDistance() / 1000) >= Integer.parseInt(standardDistance != null ? standardDistance : "0")){
+
+            // 判断运动时间是否达标
+            String standardMinTimeString = configService.selectConfigByKey("ueit.run.mintime");
+            LocalTime standardMinTime = LocalTime.parse(standardMinTimeString);
+            if(runInfo.getTime().isBefore(standardMinTime)){
+                runInfo.setState(RunStsteConstants.TIME_NO);
+            }else{
+                String standardPace = configService.selectConfigByKey("ueit.run.pace");
+                RunPaceConfig runPaceConfig = JSON.parseObject(standardPace, RunPaceConfig.class);
+                String time = runInfo.getSpeed().replaceAll("\"", "");
+                String[] split = time.split("'");
+                int userPace = (Integer.parseInt(split[0] != null ? split[0] : "0") * 60) + Integer.parseInt(split[1] != null ? split[1] : "0");
+                if("0".equals(sex)){
+                    if(runPaceConfig.getMan().getMax() >= userPace){
+                        System.out.println("符合男性数据");
+                        runInfo.setState(RunStsteConstants.YES);
+                    }else{
+                        runInfo.setState(RunStsteConstants.SPEED_NO);
+                    }
+                    if(userPace < runPaceConfig.getMan().getMin()){
+                        System.out.println("快于男性数据");
+                    }
+                }else if("1".equals(sex)){
+                    if(runPaceConfig.getWoman().getMax() >= userPace){
+                        System.out.println("符合女性数据");
+                        runInfo.setState(RunStsteConstants.YES);
+                    }else{
+                        runInfo.setState(RunStsteConstants.SPEED_NO);
+                    }
+                    if(userPace < runPaceConfig.getWoman().getMin()){
+                        System.out.println("快于女性数据");
+                    }
+                }
+            }
+
+
+        }else{
+            runInfo.setState(RunStsteConstants.DISTANCE_NO);
+        }
+
+        runInfo.setCreateTime(DateUtils.getNowDate());
+        return runInfoMapper.insertRunInfo(runInfo);
+    }
+
+    /**
+     * 修改跑步信息
+     *
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    @Override
+    public int updateRunInfo(RunInfo runInfo)
+    {
+        runInfo.setUpdateTime(DateUtils.getNowDate());
+        return runInfoMapper.updateRunInfo(runInfo);
+    }
+
+    /**
+     * 批量删除跑步信息
+     *
+     * @param ids 需要删除的跑步信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteRunInfoByIds(Long[] ids)
+    {
+        return runInfoMapper.deleteRunInfoByIds(ids);
+    }
+
+    /**
+     * 删除跑步信息信息
+     *
+     * @param id 跑步信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteRunInfoById(Long id)
+    {
+        return runInfoMapper.deleteRunInfoById(id);
+    }
+
+    /**
+     * 统计用户本周卡路里与里程总数据
+     * @param userId 用户id/upload
+     * @return
+     */
+    @Override
+    public StatisticSumHomeVo sumInfoByUser(Long userId){
+        StatisticSumHomeVo runInfo = runInfoMapper.sumInfoByUser(userId);
+        if(runInfo == null){
+            runInfo = new StatisticSumHomeVo();
+            runInfo.setDistance(0L);
+            runInfo.setKcal(0L);
+        }
+        return runInfo;
+    }
+}

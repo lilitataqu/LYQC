@@ -1,0 +1,29 @@
+package com.ueit.running.domain.dto;
+
+import com.ueit.common.core.domain.BaseEntity;
+import com.ueit.running.domain.RunInfo;
+import lombok.Data;
+
+/**
+ * @Author: douwq
+ * @Description: 跑步数据列表查询参数
+ * @Date:Create：in 2022/10/8 9:54
+ */
+@Data
+public class RunInfoListDto extends BaseEntity {
+
+    private String nickName;
+
+    private String studentId;
+
+    private String state;
+
+    private boolean isTeacher;
+
+    private String classId;
+
+    private String semester;
+
+    private Long teacherUserId;
+
+}

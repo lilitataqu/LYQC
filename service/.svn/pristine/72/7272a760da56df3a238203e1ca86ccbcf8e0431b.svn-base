@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.RunInfoMapper">
+
+    <resultMap type="RunInfo" id="RunInfoResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="time"    column="time"    />
+        <result property="speed"    column="speed"    />
+        <result property="kcal"    column="kcal"    />
+        <result property="distance"    column="distance"    />
+        <result property="kmSpeed"    column="km_speed"    />
+        <result property="points"    column="points"    />
+        <result property="altitude"    column="altitude"    />
+        <result property="altitudeSum"    column="altitude_sum"    />
+        <result property="runType"    column="run_type"    />
+        <result property="delState"    column="del_state"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectRunInfoNoPointsVo">
+        select id, user_id, time, speed, kcal, distance, km_speed, altitude, altitude_sum, run_type, del_state, create_by, create_time, update_by, update_time from run_info
+    </sql>
+
+    <sql id="selectRunInfoVo">
+        select id, user_id, time, speed, kcal, distance, km_speed, points, altitude, altitude_sum, run_type, del_state, create_by, create_time, update_by, update_time from run_info
+    </sql>
+
+    <select id="selectRunInfoList" parameterType="RunInfo" resultMap="RunInfoResult">
+        <include refid="selectRunInfoNoPointsVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="runType != null "> and run_type = #{runType}</if>
+            and del_state = 0
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectRunInfoById" parameterType="Long" resultMap="RunInfoResult">
+        <include refid="selectRunInfoVo"/>
+        where id = #{id}
+        and del_state = 0
+    </select>
+
+    <select id="sumInfoByUser" parameterType="Long" resultMap="RunInfoResult">
+        SELECT
+            sum( distance ) AS distance,
+            sum( kcal ) AS kcal
+        FROM
+            run_info
+        WHERE
+            YEARWEEK( date_format( create_time, '%Y-%m-%d' ), 1 ) = YEARWEEK( now( ) )
+        AND
+            user_id = #{userId}
+        AND
+            del_state = 0
+    </select>
+
+    <insert id="insertRunInfo" parameterType="RunInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into run_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="time != null">time,</if>
+            <if test="speed != null">speed,</if>
+            <if test="kcal != null">kcal,</if>
+            <if test="distance != null">distance,</if>
+            <if test="kmSpeed != null">km_speed,</if>
+            <if test="points != null">points,</if>
+            <if test="altitude != null">altitude,</if>
+            <if test="altitudeSum != null">altitude_sum,</if>
+            <if test="runType != null">run_type,</if>
+            <if test="delState != null">del_state,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="kcal != null">#{kcal},</if>
+            <if test="distance != null">#{distance},</if>
+            <if test="kmSpeed != null">#{kmSpeed},</if>
+            <if test="points != null">#{points},</if>
+            <if test="altitude != null">#{altitude},</if>
+            <if test="altitudeSum != null">#{altitudeSum},</if>
+            <if test="runType != null">#{runType},</if>
+            <if test="delState != null">#{delState},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRunInfo" parameterType="RunInfo">
+        update run_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="kcal != null">kcal = #{kcal},</if>
+            <if test="distance != null">distance = #{distance},</if>
+            <if test="kmSpeed != null">km_speed = #{kmSpeed},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="altitude != null">altitude = #{altitude},</if>
+            <if test="altitudeSum != null">altitude_sum = #{altitudeSum},</if>
+            <if test="runType != null">run_type = #{runType},</if>
+            <if test="delState != null">del_state = #{delState},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteRunInfoById" parameterType="Long">
+        update run_info set del_state = 1 where id = #{id}
+    </update>
+
+    <update id="deleteRunInfoByIds" parameterType="String">
+        update run_info set del_state = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

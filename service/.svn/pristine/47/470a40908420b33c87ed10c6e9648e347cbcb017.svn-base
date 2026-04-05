@@ -1,0 +1,257 @@
+package com.ueit.running.domain;
+
+import java.time.LocalTime;
+import java.util.Date;
+import java.util.List;
+
+import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ueit.common.annotation.Excel;
+import com.ueit.common.core.domain.BaseEntity;
+
+/**
+ * 用户比赛跑步数据对象 tb_tournament_group_user
+ *
+ * @author douwq
+ * @date 2022-11-29
+ */
+public class TournamentGroupUser extends BaseEntity {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 参赛ID
+     */
+    private Long id;
+
+    /**
+     * 比赛分组ID
+     */
+    @Excel(name = "比赛分组ID")
+    private Long tournamentGroupId;
+
+    /**
+     * 用户ID
+     */
+    @Excel(name = "用户ID")
+    private Long userId;
+
+    /**
+     * 跑步时长
+     */
+    @JsonFormat(pattern = "HH:mm:ss")
+    @Excel(name = "跑步时长", width = 30, dateFormat = "HH:mm:ss", sort = 0)
+    private LocalTime time;
+
+    /**
+     * 平均配速
+     */
+    @Excel(name = "平均配速")
+    private String speed;
+
+    /**
+     * 卡路里
+     */
+    @Excel(name = "卡路里")
+    private Long kcal;
+
+    /**
+     * 距离
+     */
+    @Excel(name = "距离")
+    private Long distance;
+
+    /**
+     * 公里速度
+     */
+    @Excel(name = "公里速度")
+    private String kmSpeed;
+
+    /**
+     * 路径定位
+     */
+    @Excel(name = "路径定位")
+    private String points;
+
+    /**
+     * 海拔
+     */
+    @Excel(name = "海拔")
+    private String altitude;
+
+    /**
+     * 爬升高度
+     */
+    @Excel(name = "爬升高度")
+    private Long altitudeSum;
+
+    /**
+     * 跑步类型
+     */
+    @Excel(name = "跑步类型")
+    private Integer runType;
+
+    /**
+     * 步数
+     */
+    @Excel(name = "步数")
+    private Long step;
+
+    /**
+     * 状态
+     */
+    @Excel(name = "状态")
+    private Integer state;
+
+    /**
+     * 删除状态
+     */
+    @Excel(name = "删除状态")
+    private Integer delState;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setTournamentGroupId(Long tournamentGroupId) {
+        this.tournamentGroupId = tournamentGroupId;
+    }
+
+    public Long getTournamentGroupId() {
+        return tournamentGroupId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public void setKcal(Long kcal) {
+        this.kcal = kcal;
+    }
+
+    public Long getKcal() {
+        return kcal;
+    }
+
+    public void setDistance(Long distance) {
+        this.distance = distance;
+    }
+
+    public Long getDistance() {
+        return distance;
+    }
+
+    public void setKmSpeed(String kmSpeed) {
+        this.kmSpeed = kmSpeed;
+    }
+
+    public String getKmSpeed() {
+        return kmSpeed;
+    }
+
+    public void setPoints(String points) {
+        this.points = points;
+    }
+
+    public String getPoints() {
+        return points;
+    }
+
+    public void setAltitude(String altitude) {
+        this.altitude = altitude;
+    }
+
+    public String getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitudeSum(Long altitudeSum) {
+        this.altitudeSum = altitudeSum;
+    }
+
+    public Long getAltitudeSum() {
+        return altitudeSum;
+    }
+
+    public void setRunType(Integer runType) {
+        this.runType = runType;
+    }
+
+    public Integer getRunType() {
+        return runType;
+    }
+
+    public void setStep(Long step) {
+        this.step = step;
+    }
+
+    public Long getStep() {
+        return step;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setDelState(Integer delState) {
+        this.delState = delState;
+    }
+
+    public Integer getDelState() {
+        return delState;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("tournamentGroupId", getTournamentGroupId())
+                .append("userId", getUserId())
+                .append("time", getTime())
+                .append("speed", getSpeed())
+                .append("kcal", getKcal())
+                .append("distance", getDistance())
+                .append("kmSpeed", getKmSpeed())
+                .append("points", getPoints())
+                .append("altitude", getAltitude())
+                .append("altitudeSum", getAltitudeSum())
+                .append("runType", getRunType())
+                .append("step", getStep())
+                .append("state", getState())
+                .append("delState", getDelState())
+                .append("createBy", getCreateBy())
+                .append("createTime", getCreateTime())
+                .append("updateBy", getUpdateBy())
+                .append("updateTime", getUpdateTime())
+                .toString();
+    }
+}

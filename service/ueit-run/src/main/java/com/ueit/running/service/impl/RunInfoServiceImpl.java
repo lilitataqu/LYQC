@@ -1,0 +1,256 @@
+package com.ueit.running.service.impl;
+
+import java.time.LocalTime;
+import java.util.List;
+
+import com.alibaba.fastjson2.JSON;
+import com.ueit.common.core.domain.entity.SysUser;
+import com.ueit.common.utils.DateUtils;
+import com.ueit.common.utils.SecurityUtils;
+import com.ueit.running.domain.UserWechat;
+import com.ueit.running.domain.dos.RunDistanceConfig;
+import com.ueit.running.domain.dos.RunPaceConfig;
+import com.ueit.running.domain.dos.RunTimeConfig;
+import com.ueit.running.domain.vo.StatisticSumHomeVo;
+import com.ueit.running.service.IUserWechatService;
+import com.ueit.system.service.ISysConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.ueit.running.mapper.RunInfoMapper;
+import com.ueit.running.domain.RunInfo;
+import com.ueit.running.service.IRunInfoService;
+import com.ueit.common.constant.RunStsteConstants;
+
+/**
+ * 跑步信息Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-07-07
+ */
+@Service
+public class RunInfoServiceImpl implements IRunInfoService
+{
+    @Autowired
+    private RunInfoMapper runInfoMapper;
+    @Autowired
+    private ISysConfigService configService;
+    @Autowired
+    private IUserWechatService userWechatService;
+
+    /**
+     * 查询跑步信息
+     *
+     * @param id 跑步信息主键
+     * @return 跑步信息
+     */
+    @Override
+    public RunInfo selectRunInfoById(Long id)
+    {
+        return runInfoMapper.selectRunInfoById(id);
+    }
+
+    /**
+     * 查询跑步信息列表
+     *
+     * @param runInfo 跑步信息
+     * @return 跑步信息
+     */
+    @Override
+    public List<RunInfo> selectRunInfoList(RunInfo runInfo)
+    {
+        return runInfoMapper.selectRunInfoList(runInfo);
+    }
+
+    /**
+     * 新增跑步信息
+     *
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    @Override
+    public int insertRunInfo(RunInfo runInfo)
+    {
+        // 判断该条跑步数据是否有效
+        if(checkPace(runInfo)){
+            checkDistance(runInfo);
+            checkTime(runInfo);
+        }
+
+
+        runInfo.setCreateTime(DateUtils.getNowDate());
+        return runInfoMapper.insertRunInfo(runInfo);
+    }
+
+    private boolean checkPace(RunInfo runInfo){
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        UserWechat userWechat = userWechatService.selectUserWechatByUserId(user.getUserId());
+        boolean sex = userWechat.getSex();
+
+        String standardPace = configService.selectConfigByKey("ueit.run.pace");
+        RunPaceConfig runPaceConfig = JSON.parseObject(standardPace, RunPaceConfig.class);
+        String time = runInfo.getSpeed().replaceAll("\"", "");
+        String[] split = time.split("'");
+        int userPace = (Integer.parseInt(split[0] != null ? split[0] : "0") * 60) + Integer.parseInt(split[1] != null ? split[1] : "0");
+        if(sex){
+            if(runPaceConfig.getMan().getMax() >= userPace){
+                System.out.println("符合男性数据");
+//                runInfo.setState(RunStsteConstants.YES);
+                return true;
+            }else{
+                runInfo.setState(RunStsteConstants.SPEED_NO);
+                return false;
+            }
+//            if(userPace < runPaceConfig.getMan().getMin()){
+//                System.out.println("快于男性数据");
+//            }
+        }else{
+            if(runPaceConfig.getWoman().getMax() >= userPace){
+                System.out.println("符合女性数据");
+//                runInfo.setState(RunStsteConstants.YES);
+                return true;
+            }else{
+                runInfo.setState(RunStsteConstants.SPEED_NO);
+                return false;
+            }
+//            if(userPace < runPaceConfig.getWoman().getMin()){
+//                System.out.println("快于女性数据");
+//            }
+        }
+    }
+
+    private void checkDistance(RunInfo runInfo){
+        String standardDistance = configService.selectConfigByKey("ueit.run.distance");
+        List<RunDistanceConfig> runDistanceConfig = JSON.parseArray(standardDistance, RunDistanceConfig.class);
+        for (RunDistanceConfig distanceConfig : runDistanceConfig) {
+            if(runInfo.getDistance() >= distanceConfig.getDistance() * 1000){
+                runInfo.setState(distanceConfig.getDict());
+                break;
+            }
+        }
+    }
+
+    private void checkTime(RunInfo runInfo){
+        String standardMinTimeString = configService.selectConfigByKey("ueit.run.mintime");
+        List<RunTimeConfig> runTimeConfig = JSON.parseArray(standardMinTimeString, RunTimeConfig.class);
+        for (RunTimeConfig timeConfig : runTimeConfig) {
+            LocalTime standardMinTime = LocalTime.parse(timeConfig.getTime());
+            if(runInfo.getTime().plusSeconds(1).isAfter(standardMinTime)){
+                runInfo.setState(timeConfig.getDict());
+                break;
+            }
+        }
+    }
+
+    /**
+     * 修改跑步信息
+     *
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    @Override
+    public int updateRunInfo(RunInfo runInfo)
+    {
+        runInfo.setUpdateTime(DateUtils.getNowDate());
+        return runInfoMapper.updateRunInfo(runInfo);
+    }
+
+    /**
+     * 批量删除跑步信息
+     *
+     * @param ids 需要删除的跑步信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteRunInfoByIds(Long[] ids)
+    {
+        return runInfoMapper.deleteRunInfoByIds(ids);
+    }
+
+    /**
+     * 删除跑步信息信息
+     *
+     * @param id 跑步信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteRunInfoById(Long id)
+    {
+        return runInfoMapper.deleteRunInfoById(id);
+    }
+
+    /**
+     * 统计用户本周卡路里与里程总数据
+     * @param userId 用户id/upload
+     * @return
+     */
+    @Override
+    public StatisticSumHomeVo sumInfoByUser(Long userId){
+        StatisticSumHomeVo runInfo = runInfoMapper.sumInfoByUser(userId);
+        if(runInfo == null){
+            runInfo = new StatisticSumHomeVo();
+            runInfo.setDistance(0L);
+            runInfo.setKcal(0L);
+        }
+        return runInfo;
+    }
+
+    /**
+     * 新增跑步信息
+     * 版本 V2
+     *
+     * @param runInfo 跑步信息
+     * @return 结果
+     */
+    @Override
+    public int addRunInfoV2(RunInfo runInfo) {
+        /*// 获取登录用户
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        runInfo.setUserId(user.getUserId());
+
+        // 处理时间数据
+        Long time = runInfo.getEndRunTime() - runInfo.getStartRunTime();
+        LocalTime runTime = LocalTime.of(0,0,0);
+        runTime = runTime.plusSeconds(time);// 超过10秒才会进行时间修正
+
+        // 修正时间
+        if(runTime.isAfter(runInfo.getTime().plusSeconds(10))){
+            runInfo.setTime(runTime);
+            // 计算配速
+            float l = (float) runInfo.getDistance() / 1000;
+            int speedTime = Math.round(time / (l));
+            int min_speed = speedTime / 60;
+            int sec_speed = speedTime % 60;
+            String speed = min_speed + "'" + sec_speed + '"';
+            runInfo.setSpeed(speed);
+        }*/
+        repairRunInfo(runInfo);
+
+        // 存储数据
+        insertRunInfo(runInfo);
+        return 0;
+    }
+
+    @Override
+    public void repairRunInfo(RunInfo runInfo){
+        // 获取登录用户
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        runInfo.setUserId(user.getUserId());
+
+        // 处理时间数据
+        Long time = runInfo.getEndRunTime() - runInfo.getStartRunTime();
+        LocalTime runTime = LocalTime.of(0,0,0);
+        runTime = runTime.plusSeconds(time);// 超过10秒才会进行时间修正
+
+        // 修正时间
+        if(runTime.isAfter(runInfo.getTime().plusSeconds(10))){
+            runInfo.setTime(runTime);
+            // 计算配速
+            float l = (float) runInfo.getDistance() / 1000;
+            int speedTime = Math.round(time / (l));
+            int min_speed = speedTime / 60;
+            int sec_speed = speedTime % 60;
+            String speed = min_speed + "'" + sec_speed + '"';
+            runInfo.setSpeed(speed);
+        }
+    }
+}

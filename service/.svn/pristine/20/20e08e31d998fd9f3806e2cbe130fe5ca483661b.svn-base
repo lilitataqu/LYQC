@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.HomeStatisticMapper">
+
+    <resultMap type="CountStatisticVo" id="CountStatisticVoResult">
+            <result property="num" column="num"/>
+            <result property="date" column="date"/>
+    </resultMap>
+
+    <resultMap type="HomePageSumVo" id="HomePageSumVoResult">
+        <result property="date" column="datelist"/>
+        <result property="userNumber" column="user"/>
+        <result property="countNumber" column="count"/>
+        <result property="distanceNumber" column="distance"/>
+        <result property="kcalNumber" column="kcal"/>
+    </resultMap>
+
+    <select id="selectUserCountListByDate" parameterType="CountStatisticDto" resultMap="CountStatisticVoResult">
+        SELECT
+        d.date,
+        IFNULL( info.count, 0 ) AS num
+        FROM
+        (
+        SELECT
+        DATE_ADD( #{startDate}, INTERVAL CAST( help_topic_id AS signed INTEGER ) DAY ) AS `date`
+        FROM
+        mysql.help_topic
+        WHERE
+        help_topic_id &lt; DATEDIFF( #{endDate}, #{startDate} ) + 1
+        ) AS d
+        LEFT JOIN (
+        SELECT
+        count( * ) AS count,
+        cast( create_time AS date ) AS date
+        FROM
+        run_info r
+        WHERE
+        r.create_time BETWEEN CONCAT( #{startDate}, " 00:00:00" )
+        AND CONCAT( #{endDate}, " 23:59:59" )
+        GROUP BY
+        cast( create_time AS date )
+        ) AS info ON info.date = d.date;
+    </select>
+
+    <select id="selectHomePageSumInfo" resultMap="HomePageSumVoResult">
+        SELECT
+            count(DISTINCT(run.user_id)) as user,
+            count(*) as count,
+            (sum(run.distance) / 1000) as distance,
+            (sum(run.kcal) / 1000) as kcal
+        FROM
+            run_info AS run
+        WHERE
+        YEARWEEK( date_format( run.create_time, '%Y-%m-%d' ), 1 ) = YEARWEEK( now( ) )
+        AND run.del_state = 0
+    </select>
+
+    <select id="selectHomePageInfoListWeek" resultMap="HomePageSumVoResult">
+        SELECT
+            c.datelist,
+            ifnull( sum.USER, 0 ) AS user,
+            ifnull( sum.count, 0 ) AS count,
+            ifnull( sum.distance, 0 ) AS distance,
+            ifnull( sum.kcal, 0 ) AS kcal
+        FROM
+            tb_calendar c
+            LEFT JOIN (
+        SELECT
+            count( DISTINCT ( run.user_id ) ) AS user,
+            count( * ) AS count,
+            ( sum( run.distance ) / 1000 ) AS distance,
+            ( sum( run.kcal ) / 1000 ) AS kcal,
+            date_format( run.create_time, '%Y-%m-%d' ) AS create_time
+        FROM
+            run_info AS run
+        WHERE
+            YEARWEEK( date_format( run.create_time, '%Y-%m-%d' ), 1 ) = YEARWEEK( now( ) )
+            AND run.del_state = 0
+        GROUP BY
+            date_format( run.create_time, '%Y-%m-%d' )
+            ) sum ON sum.create_time = c.datelist
+        WHERE
+            YEARWEEK( date_format( c.datelist, '%Y-%m-%d' ), 1 ) = YEARWEEK( now( ) )
+        ORDER BY
+            datelist
+    </select>
+
+    <select id="selectHomePageInfoListLastWeek" resultMap="HomePageSumVoResult">
+        SELECT
+            c.datelist,
+            ifnull( sum.USER, 0 ) AS user,
+            ifnull( sum.count, 0 ) AS count,
+            ifnull( sum.distance, 0 ) AS distance,
+            ifnull( sum.kcal, 0 ) AS kcal
+        FROM
+            tb_calendar c
+            LEFT JOIN (
+        SELECT
+            count( DISTINCT ( run.user_id ) ) AS user,
+            count( * ) AS count,
+            ( sum( run.distance ) / 1000 ) AS distance,
+            ( sum( run.kcal ) / 1000 ) AS kcal,
+            date_format( run.create_time, '%Y-%m-%d' ) AS create_time
+        FROM
+            run_info AS run
+        WHERE
+            YEARWEEK( date_format( run.create_time, '%Y-%m-%d' ), 1 ) = YEARWEEK( now( ) ) - 1
+            AND run.del_state = 0
+        GROUP BY
+            date_format( run.create_time, '%Y-%m-%d' )
+            ) sum ON sum.create_time = c.datelist
+        WHERE
+            YEARWEEK( date_format( c.datelist, '%Y-%m-%d' ), 1 ) = YEARWEEK( now( ) ) - 1
+        ORDER BY
+            datelist
+    </select>
+
+
+</mapper>

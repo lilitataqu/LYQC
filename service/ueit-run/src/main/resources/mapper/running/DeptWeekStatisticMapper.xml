@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.DeptWeekStatisticMapper">
+
+    <resultMap type="DeptWeekStatistic" id="DeptWeekStatisticResult">
+            <result property="id" column="id"/>
+            <result property="deptId" column="dept_id"/>
+            <result property="deptName" column="dept_name"/>
+            <result property="distance" column="distance"/>
+            <result property="kcal" column="kcal"/>
+            <result property="runCount" column="run_count"/>
+    </resultMap>
+
+    <sql id="selectDeptWeekStatisticVo">
+        SELECT
+            d.dept_id,
+            d.dept_name,
+            sum( run.distance ) AS distance,
+            sum( run.kcal ) AS kcal,
+            count( run.id ) AS run_count
+        FROM
+            run_info run
+            INNER JOIN sys_user u ON u.user_id = run.user_id
+            AND u.user_type = "01"
+            AND u.del_flag = 0
+            AND u.STATUS = 0
+            INNER JOIN sys_dept d ON u.dept_id = d.dept_id
+            AND d.del_flag = 0
+            AND d.STATUS = 0
+    </sql>
+
+    <select id="selectDeptWeekStatisticList" parameterType="DeptWeekStatisticDto" resultMap="DeptWeekStatisticResult">
+        <include refid="selectDeptWeekStatisticVo"/>
+        <where>
+            and YEARWEEK( date_format( run.create_time, '%Y-%m-%d' ), 1 ) = YEARWEEK( now( ) )
+            and run.del_state = 0
+            <if test="deptId != null ">
+                and ( find_in_set(#{deptId}, d.ancestors) or d.dept_id = #{deptId} )
+            </if>
+        </where>
+        GROUP BY
+            d.dept_id
+        ORDER BY
+        <if test="orderColumn == null or orderColumn == 'distance'">
+            distance
+        </if>
+        <if test="orderColumn == 'kcal' ">
+            kcal
+        </if>
+        <if test="orderType == null or orderType == 'desc'">
+            DESC
+        </if>
+
+    </select>
+
+
+</mapper>

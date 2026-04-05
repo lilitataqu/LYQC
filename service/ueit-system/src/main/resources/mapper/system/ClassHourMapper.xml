@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.system.mapper.ClassHourMapper">
+
+    <resultMap type="ClassHour" id="ClassHourResult">
+            <result property="id" column="id"/>
+            <result property="userId" column="user_id"/>
+            <result property="userNickName" column="nick_name"/>
+            <result property="name" column="name"/>
+            <result property="week" column="week"/>
+            <result property="classHour" column="class_hour"/>
+            <result property="semester" column="semester"/>
+            <result property="str1" column="str1"/>
+            <result property="str2" column="str2"/>
+            <result property="i1" column="i1"/>
+            <result property="i2" column="i2"/>
+    </resultMap>
+
+    <resultMap id="ChooseWxUserListResult" type="ChooseWxUserList">
+        <id property="userId" column="user_id"/>
+        <result property="nickName" column="nick_name"/>
+    </resultMap>
+
+    <sql id="selectClassHourVo">
+        select id, user_id, name, week, class_hour, semester, str1, str2, i1, i2
+        from tb_class_hour
+    </sql>
+
+    <select id="selectClassHourList" parameterType="ClassHour" resultMap="ClassHourResult">
+        select c.id, c.user_id, u.nick_name, c.name, c.week, c.class_hour, c.semester, c.str1, c.str2, c.i1, c.i2
+        from tb_class_hour c
+        LEFT JOIN sys_user u on c.user_id = u.user_id
+        <where>
+                        <if test="userId != null ">
+                            and c.user_id = #{userId}
+                        </if>
+                        <if test="name != null  and name != ''">
+                            and c.name like concat('%', #{name}, '%')
+                        </if>
+                        <if test="week != null  and week != ''">
+                            and c.week = #{week}
+                        </if>
+                        <if test="classHour != null  and classHour != ''">
+                            and c.class_hour = #{classHour}
+                        </if>
+                        <if test="semester != null  and semester != ''">
+                            and c.semester = #{semester}
+                        </if>
+                        <if test="str1 != null  and str1 != ''">
+                            and c.str1 = #{str1}
+                        </if>
+                        <if test="str2 != null  and str2 != ''">
+                            and c.str2 = #{str2}
+                        </if>
+                        <if test="i1 != null ">
+                            and c.i1 = #{i1}
+                        </if>
+                        <if test="i2 != null ">
+                            and c.i2 = #{i2}
+                        </if>
+        </where>
+    </select>
+
+    <select id="selectClassHourById" parameterType="Long"
+            resultMap="ClassHourResult">
+            <include refid="selectClassHourVo"/>
+            where id = #{id}
+    </select>
+
+    <select id="selectTeacherByWeekAndClassHour" resultMap="ClassHourResult">
+        SELECT
+            c.id,
+            u.nick_name
+        FROM
+            tb_class_hour c
+            INNER JOIN sys_user u ON c.user_id = u.user_id
+        WHERE
+            c.WEEK = ${week}
+            AND c.class_hour = ${classHour}
+            AND c.semester = ${semester}
+    </select>
+
+    <select id="selectClassHourByUserId" parameterType="ClassHour" resultMap="ClassHourResult">
+        SELECT
+             u.nick_name,
+             (select dict_label from sys_dict_data where dict_type = 'week_info' and dict_value = c.week) as week,
+             (select dict_label from sys_dict_data where dict_type = 'class_number' and dict_value = c.class_hour) as class_hour
+        FROM
+            tb_class_hour c
+            INNER JOIN tb_class_hour_user cu on cu.class_id = c.id
+            inner join sys_user u on u.user_id = c.user_id
+        WHERE
+             c.semester = #{semester}
+             and cu.user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <insert id="insertClassHour" parameterType="ClassHour" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into tb_class_hour
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="userId != null">user_id,
+                    </if>
+                    <if test="name != null">name,
+                    </if>
+                    <if test="week != null and week != ''">week,
+                    </if>
+                    <if test="classHour != null and classHour != ''">class_hour,
+                    </if>
+                    <if test="semester != null and semester != ''">semester,
+                    </if>
+                    <if test="str1 != null">str1,
+                    </if>
+                    <if test="str2 != null">str2,
+                    </if>
+                    <if test="i1 != null">i1,
+                    </if>
+                    <if test="i2 != null">i2,
+                    </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="userId != null">#{userId},
+                    </if>
+                    <if test="name != null">#{name},
+                    </if>
+                    <if test="week != null and week != ''">#{week},
+                    </if>
+                    <if test="classHour != null and classHour != ''">#{classHour},
+                    </if>
+                    <if test="semester != null and semester != ''">#{semester},
+                    </if>
+                    <if test="str1 != null">#{str1},
+                    </if>
+                    <if test="str2 != null">#{str2},
+                    </if>
+                    <if test="i1 != null">#{i1},
+                    </if>
+                    <if test="i2 != null">#{i2},
+                    </if>
+        </trim>
+    </insert>
+
+    <update id="updateClassHour" parameterType="ClassHour">
+        update tb_class_hour
+        <trim prefix="SET" suffixOverrides=",">
+                    <if test="userId != null">user_id =
+                        #{userId},
+                    </if>
+                    <if test="name != null">name =
+                        #{name},
+                    </if>
+                    <if test="week != null and week != ''">week =
+                        #{week},
+                    </if>
+                    <if test="classHour != null and classHour != ''">class_hour =
+                        #{classHour},
+                    </if>
+                    <if test="semester != null and semester != ''">semester =
+                        #{semester},
+                    </if>
+                    <if test="str1 != null">str1 =
+                        #{str1},
+                    </if>
+                    <if test="str2 != null">str2 =
+                        #{str2},
+                    </if>
+                    <if test="i1 != null">i1 =
+                        #{i1},
+                    </if>
+                    <if test="i2 != null">i2 =
+                        #{i2},
+                    </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClassHourById" parameterType="Long">
+        delete from tb_class_hour where id = #{id}
+    </delete>
+
+    <delete id="deleteClassHourByIds" parameterType="String">
+        delete from tb_class_hour where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

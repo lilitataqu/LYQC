@@ -1,0 +1,80 @@
+package com.ueit.running.service.impl;
+
+import com.ueit.running.domain.dto.CountStatisticDto;
+import com.ueit.running.domain.dto.DeptWeekStatisticDto;
+import com.ueit.running.domain.vo.DeptWeekStatistic;
+import com.ueit.running.domain.vo.HomePageListVo;
+import com.ueit.running.domain.vo.HomePageSumVo;
+import com.ueit.running.mapper.DeptWeekStatisticMapper;
+import com.ueit.running.mapper.HomeStatisticMapper;
+import com.ueit.running.service.IHomeStatisticService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * 首页统计Service业务层处理
+ *
+ * @author douwq
+ * @date 2022-08-03
+ */
+@Service
+@AllArgsConstructor
+public class HomeStatisticServiceImpl implements IHomeStatisticService {
+
+    private final HomeStatisticMapper homeStatisticMapper;
+
+    /**
+     * 查询本周每日跑步人数
+     *
+     * @return 统计数据
+     */
+    @Override
+    public List selectUserCountListByDate(CountStatisticDto countStatisticDto) {
+        if(countStatisticDto.getStartDate() == null || countStatisticDto.getEndDate() == null){
+            return new LinkedList();
+        }
+        return homeStatisticMapper.selectUserCountListByDate(countStatisticDto);
+    }
+
+    /**
+     * 查询首页总和数据
+     * @return
+     */
+    @Override
+    public HomePageSumVo selectHomePageSumInfo() {
+        return homeStatisticMapper.selectHomePageSumInfo();
+    }
+
+    @Override
+    public HomePageListVo selectHomePageInfoList() {
+        List<HomePageSumVo> week = homeStatisticMapper.selectHomePageInfoListWeek();
+        List<HomePageSumVo> lastWeek = homeStatisticMapper.selectHomePageInfoListLastWeek();
+
+
+        List<Integer> userNumberList = week.stream().map(HomePageSumVo::getUserNumber).collect(Collectors.toList());
+        List<Integer> countNumberList = week.stream().map(HomePageSumVo::getCountNumber).collect(Collectors.toList());
+        List<Integer> distanceNumberList = week.stream().map(HomePageSumVo::getDistanceNumber).collect(Collectors.toList());
+        List<Integer> kcalNumberList = week.stream().map(HomePageSumVo::getKcalNumber).collect(Collectors.toList());
+
+        List<Integer> userNumberListLastWeek = lastWeek.stream().map(HomePageSumVo::getUserNumber).collect(Collectors.toList());
+        List<Integer> countNumberListLastWeek = lastWeek.stream().map(HomePageSumVo::getCountNumber).collect(Collectors.toList());
+        List<Integer> distanceNumberListLastWeek = lastWeek.stream().map(HomePageSumVo::getDistanceNumber).collect(Collectors.toList());
+        List<Integer> kcalNumberListLastWeek = lastWeek.stream().map(HomePageSumVo::getKcalNumber).collect(Collectors.toList());
+
+        HomePageListVo weekList = new HomePageListVo();
+        weekList.setUserNumberList(userNumberList);
+        weekList.setCountNumberList(countNumberList);
+        weekList.setDistanceNumberList(distanceNumberList);
+        weekList.setKcalNumberList(kcalNumberList);
+        weekList.setUserNumberListLastWeek(userNumberListLastWeek);
+        weekList.setCountNumberListLastWeek(countNumberListLastWeek);
+        weekList.setDistanceNumberListLastWeek(distanceNumberListLastWeek);
+        weekList.setKcalNumberListLastWeek(kcalNumberListLastWeek);
+
+        return weekList;
+    }
+}

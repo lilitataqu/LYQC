@@ -1,0 +1,24 @@
+package com.ueit.running.mapper;
+
+import com.ueit.running.domain.dto.CountStatisticDto;
+import com.ueit.running.domain.dto.DeptWeekStatisticDto;
+import com.ueit.running.domain.vo.DeptWeekStatistic;
+
+import java.util.List;
+
+/**
+ * 首页统计Mapper接口
+ *
+ * @author douwq
+ * @date 2022/8/2 10:54
+ */
+public interface HomeStatisticMapper {
+
+    /**
+     * 根据日期查询每日跑步人数
+     *
+     * @return 统计数据
+     */
+    public List selectUserCountListByDate(CountStatisticDto countStatisticDto);
+
+}

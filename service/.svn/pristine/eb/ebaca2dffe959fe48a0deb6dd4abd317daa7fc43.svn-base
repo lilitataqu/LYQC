@@ -1,0 +1,111 @@
+package com.ueit.web.controller.app;
+
+import com.ueit.common.core.controller.BaseController;
+import com.ueit.common.core.domain.AjaxResult;
+import com.ueit.common.core.domain.entity.SysUser;
+import com.ueit.common.core.page.TableDataInfo;
+import com.ueit.common.utils.SecurityUtils;
+import com.ueit.common.utils.bean.BeanUtils;
+import com.ueit.running.domain.RunInfo;
+import com.ueit.running.domain.UserWechat;
+import com.ueit.running.service.IRunInfoService;
+import com.ueit.web.controller.vo.RunInfoVo;
+import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.NumberFormat;
+import java.util.List;
+
+/**
+ * @Author: douwq
+ * @Description:
+ * @Date:Create：in 2022/7/15 18:02
+ */
+@RestController
+@RequestMapping("/appRunInfo" )
+@AllArgsConstructor
+public class AppRunInfoController extends BaseController {
+    private final IRunInfoService runInfoService;
+
+    /**
+     * 新增跑步数据
+     */
+    @PreAuthorize("@ss.hasPermi('app')" )
+    @PostMapping("/add")
+    public AjaxResult add(@RequestBody RunInfo runInfo) {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        runInfo.setUserId(user.getUserId());
+        runInfoService.insertRunInfo(runInfo);
+        return AjaxResult.success(runInfo.getId());
+    }
+
+    /**
+     * 根据id 查询跑步数据详情
+     */
+    @PreAuthorize("@ss.hasPermi('app')" )
+    @PostMapping("/detail")
+    public AjaxResult detail(@RequestBody Long id) {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        RunInfo runInfo = runInfoService.selectRunInfoById(id);
+        RunInfoVo runInfoVo = new RunInfoVo();
+        BeanUtils.copyBeanProp(runInfoVo, runInfo);
+        if(runInfo.getUserId().equals(user.getUserId())){
+            runInfoVo.setKcal(runInfo.getKcal());
+            runInfoVo.setDistance(runInfo.getDistance());
+            runInfoVo.setKmSpeed(runInfo.getKmSpeed());
+            runInfoVo.setPoints(runInfo.getPoints());
+            runInfoVo.setAltitude(runInfo.getAltitude());
+            return AjaxResult.success(runInfoVo);
+        }
+        return AjaxResult.error("非法操作");
+    }
+
+    /**
+     * 根据id 删除跑步数据
+     */
+    @PreAuthorize("@ss.hasPermi('app')" )
+    @PostMapping("/delete")
+    public AjaxResult delete(@RequestBody Long id) {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        RunInfo runInfo = runInfoService.selectRunInfoById(id);
+        if(runInfo.getUserId().equals(user.getUserId())){
+            return toAjax(runInfoService.deleteRunInfoById(id));
+        }
+        return AjaxResult.error("非法操作");
+    }
+
+    /**
+     * 获取跑步数据列表
+     */
+    @PreAuthorize("@ss.hasPermi('app')" )
+    @GetMapping("/list")
+    public TableDataInfo list() {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        if(ObjectUtils.isEmpty(user)){
+            return getDataTable(null);
+        }
+        RunInfo runInfo = new RunInfo();
+        runInfo.setUserId(user.getUserId());
+
+        startPage();
+        List<RunInfo> list = runInfoService.selectRunInfoList(runInfo);
+        return getDataTable(list);
+    }
+
+    /**
+     * 统计用户本周卡路里与里程总数据
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('app')" )
+    @GetMapping("/statistic")
+    public AjaxResult statisticHome(){
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        if (!ObjectUtils.isEmpty(user)) {
+            return AjaxResult.success(runInfoService.sumInfoByUser(user.getUserId()));
+        }
+        return AjaxResult.error("非法操作");
+    }
+
+}

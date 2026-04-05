@@ -1,0 +1,25 @@
+package com.ueit.running.service;
+
+import com.ueit.running.domain.dto.CountStatisticDto;
+import com.ueit.running.domain.dto.DeptWeekStatisticDto;
+import com.ueit.running.domain.vo.DeptWeekStatistic;
+
+import java.util.List;
+
+
+/**
+ * 首页统计Service接口
+ *
+ * @author douwq
+ * @date 2022-08-03
+ */
+public interface IHomeStatisticService {
+
+    /**
+     * 查询本周每日跑步人数
+     *
+     * @return 统计数据
+     */
+    public List selectUserCountListByDate(CountStatisticDto countStatisticDto);
+
+}

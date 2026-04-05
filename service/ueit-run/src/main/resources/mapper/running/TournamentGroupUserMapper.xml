@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.TournamentGroupUserMapper">
+
+    <resultMap type="TournamentGroupUser" id="TournamentGroupUserResult">
+        <result property="id" column="id"/>
+        <result property="tournamentGroupId" column="tournament_group_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="time" column="time"/>
+        <result property="speed" column="speed"/>
+        <result property="kcal" column="kcal"/>
+        <result property="distance" column="distance"/>
+        <result property="kmSpeed" column="km_speed"/>
+        <result property="points" column="points"/>
+        <result property="altitude" column="altitude"/>
+        <result property="altitudeSum" column="altitude_sum"/>
+        <result property="runType" column="run_type"/>
+        <result property="step" column="step"/>
+        <result property="state" column="state"/>
+        <result property="delState" column="del_state"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap type="TournamentMyVo" id="TournamentMyVoResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="groupName" column="group_name"/>
+        <result property="distance" column="distance"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="time" column="time"/>
+    </resultMap>
+
+    <resultMap type="TournamentRankVo" id="TournamentRankVoResult">
+        <result property="nickName" column="nick_name"/>
+        <result property="avataer" column="avataer"/>
+        <result property="count" column="count"/>
+        <result property="sumTime" column="sumTime"/>
+        <result property="avgTime" column="avgTime"/>
+    </resultMap>
+
+    <resultMap type="TournamentRankSystemVo" id="TournamentRankSystemVoResult">
+        <result property="num" column="num"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="avataer" column="avataer"/>
+        <result property="count" column="count"/>
+        <result property="sumTime" column="sumTime"/>
+        <result property="avgTime" column="avgTime"/>
+    </resultMap>
+
+    <sql id="selectTournamentGroupUserVo">
+        select id, tournament_group_id, user_id, time, speed, kcal, distance, km_speed, points, altitude, altitude_sum, run_type, step, state, del_state, create_by, create_time, update_by, update_time
+        from tb_tournament_group_user
+    </sql>
+
+    <select id="selectTournamentGroupUserList" parameterType="TournamentGroupUser"
+            resultMap="TournamentGroupUserResult">
+        <include refid="selectTournamentGroupUserVo"/>
+        <where>
+            <if test="tournamentGroupId != null ">
+                and tournament_group_id = #{tournamentGroupId}
+            </if>
+            <if test="userId != null ">
+                and user_id = #{userId}
+            </if>
+            <if test="state != null ">
+                and state = #{state}
+            </if>
+            <if test="delState != null ">
+                and del_state = #{delState}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTournamentGroupUserById" parameterType="Long"
+            resultMap="TournamentGroupUserResult">
+        <include refid="selectTournamentGroupUserVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectTournamentUserByTournamentId" resultMap="TournamentGroupUserResult">
+        SELECT
+            tu.tournament_group_id, tu.time, tu.update_time
+        FROM
+            tb_tournament_group_user tu
+            INNER JOIN tb_tournament_group tg ON tu.tournament_group_id = tg.id
+        WHERE
+            tg.tournament_id = #{tournamentId}
+            AND tu.user_id = #{userId}
+            and tu.del_state = 0
+            <if test="state != null ">
+                and state = #{state}
+            </if>
+        ORDER BY tu.id desc
+    </select>
+
+    <select id="selectMyTournamentRecord" parameterType="Long" resultMap="TournamentMyVoResult">
+        SELECT
+            tu.id,
+            t.`name`,
+            t.cover,
+            tg.`name` as group_name,
+            tg.distance,
+            tu.update_time,
+            tu.time
+        FROM
+            tb_tournament_group_user tu
+            INNER JOIN tb_tournament_group tg ON tg.id = tu.tournament_group_id
+            INNER JOIN tb_tournament t ON t.id = tg.tournament_id
+        WHERE
+            tu.user_id = #{userId}
+            and tu.state = 0
+        ORDER BY
+	        update_time DESC
+    </select>
+
+    <select id="selectTournamentRank" parameterType="Long" resultMap="TournamentRankVoResult">
+        SELECT
+            u.nick_name,
+            u.avatar,
+            count( * ) AS count,
+            SEC_TO_TIME( sum( TIME_TO_SEC( tu.time ) ) ) AS sumTime,
+            SEC_TO_TIME( AVG( TIME_TO_SEC( tu.time ) ) ) AS avgTime
+        FROM
+            tb_tournament_group_user tu
+            INNER JOIN tb_tournament_group tg ON ( tu.tournament_group_id = tg.id AND tu.state = 0 )
+            INNER JOIN tb_tournament t ON t.id = tg.tournament_id
+            INNER JOIN sys_user u ON u.user_id = tu.user_id
+        WHERE
+            tu.tournament_group_id = #{groupId}
+        GROUP BY
+            u.user_id
+        ORDER BY
+            count DESC, sumTime ASC
+    </select>
+
+    <select id="selectTournamentRankSystem" parameterType="TournamentRankSystemDto" resultMap="TournamentRankSystemVoResult">
+        SELECT
+        ( @i := @i + 1 ) AS num,
+        a.*
+        FROM
+        (
+        SELECT
+        u.nick_name,
+        u.phonenumber,
+        u.avatar,
+        count( * ) AS count,
+        SEC_TO_TIME( sum( TIME_TO_SEC( tu.time ) ) ) AS sumTime,
+        SEC_TO_TIME( AVG( TIME_TO_SEC( tu.time ) ) ) AS avgTime
+        FROM
+        tb_tournament_group_user tu
+        INNER JOIN tb_tournament_group tg ON ( tu.tournament_group_id = tg.id AND tu.state = 0 )
+        INNER JOIN tb_tournament t ON t.id = tg.tournament_id
+        INNER JOIN sys_user u ON u.user_id = tu.user_id
+        WHERE
+        tu.tournament_group_id = #{groupId}
+        GROUP BY
+        u.user_id
+        <if test="maxNumber != null">
+            HAVING count >= #{maxNumber}
+        </if>
+        ORDER BY
+        count DESC,
+        sumTime ASC
+        ) a,(SELECT @i:=0) d
+    </select>
+
+    <insert id="insertTournamentGroupUser" parameterType="TournamentGroupUser">
+        insert into tb_tournament_group_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,
+            </if>
+            <if test="tournamentGroupId != null">tournament_group_id,
+            </if>
+            <if test="userId != null">user_id,
+            </if>
+            <if test="time != null">time,
+            </if>
+            <if test="speed != null">speed,
+            </if>
+            <if test="kcal != null">kcal,
+            </if>
+            <if test="distance != null">distance,
+            </if>
+            <if test="kmSpeed != null">km_speed,
+            </if>
+            <if test="points != null">points,
+            </if>
+            <if test="altitude != null">altitude,
+            </if>
+            <if test="altitudeSum != null">altitude_sum,
+            </if>
+            <if test="runType != null">run_type,
+            </if>
+            <if test="step != null">step,
+            </if>
+            <if test="state != null">state,
+            </if>
+            <if test="delState != null">del_state,
+            </if>
+            <if test="createBy != null">create_by,
+            </if>
+            <if test="createTime != null">create_time,
+            </if>
+            <if test="updateBy != null">update_by,
+            </if>
+            <if test="updateTime != null">update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},
+            </if>
+            <if test="tournamentGroupId != null">#{tournamentGroupId},
+            </if>
+            <if test="userId != null">#{userId},
+            </if>
+            <if test="time != null">#{time},
+            </if>
+            <if test="speed != null">#{speed},
+            </if>
+            <if test="kcal != null">#{kcal},
+            </if>
+            <if test="distance != null">#{distance},
+            </if>
+            <if test="kmSpeed != null">#{kmSpeed},
+            </if>
+            <if test="points != null">#{points},
+            </if>
+            <if test="altitude != null">#{altitude},
+            </if>
+            <if test="altitudeSum != null">#{altitudeSum},
+            </if>
+            <if test="runType != null">#{runType},
+            </if>
+            <if test="step != null">#{step},
+            </if>
+            <if test="state != null">#{state},
+            </if>
+            <if test="delState != null">#{delState},
+            </if>
+            <if test="createBy != null">#{createBy},
+            </if>
+            <if test="createTime != null">#{createTime},
+            </if>
+            <if test="updateBy != null">#{updateBy},
+            </if>
+            <if test="updateTime != null">#{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateTournamentGroupUser" parameterType="TournamentGroupUser">
+        update tb_tournament_group_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tournamentGroupId != null">tournament_group_id =
+                #{tournamentGroupId},
+            </if>
+            <if test="userId != null">user_id =
+                #{userId},
+            </if>
+            <if test="time != null">time =
+                #{time},
+            </if>
+            <if test="speed != null">speed =
+                #{speed},
+            </if>
+            <if test="kcal != null">kcal =
+                #{kcal},
+            </if>
+            <if test="distance != null">distance =
+                #{distance},
+            </if>
+            <if test="kmSpeed != null">km_speed =
+                #{kmSpeed},
+            </if>
+            <if test="points != null">points =
+                #{points},
+            </if>
+            <if test="altitude != null">altitude =
+                #{altitude},
+            </if>
+            <if test="altitudeSum != null">altitude_sum =
+                #{altitudeSum},
+            </if>
+            <if test="runType != null">run_type =
+                #{runType},
+            </if>
+            <if test="step != null">step =
+                #{step},
+            </if>
+            <if test="state != null">state =
+                #{state},
+            </if>
+            <if test="delState != null">del_state =
+                #{delState},
+            </if>
+            <if test="createBy != null">create_by =
+                #{createBy},
+            </if>
+            <if test="createTime != null">create_time =
+                #{createTime},
+            </if>
+            <if test="updateBy != null">update_by =
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">update_time =
+                #{updateTime},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTournamentGroupUserById" parameterType="Long">
+        delete from tb_tournament_group_user where id = #{id}
+    </delete>
+
+    <delete id="deleteTournamentGroupUserByIds" parameterType="String">
+        delete from tb_tournament_group_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

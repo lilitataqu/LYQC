@@ -1,0 +1,6 @@
+14:47:49.683 [schedule-pool-1] INFO  sys-user - [run,52] - [127.0.0.1]内网IP[admin][Error][验证码已失效]
+14:47:53.922 [schedule-pool-1] INFO  sys-user - [run,52] - [127.0.0.1]内网IP[admin][Success][登录成功]
+17:00:26.647 [schedule-pool-1] INFO  sys-user - [run,52] - [172.28.103.180]内网IP[蒋阮][Success][登录成功]
+17:02:18.426 [schedule-pool-1] INFO  sys-user - [run,52] - [172.28.103.150]内网IP[app_18569889685][Success][登录成功]
+17:03:42.807 [schedule-pool-2] INFO  sys-user - [run,52] - [172.28.103.150]内网IP[app_18569889685][Success][登录成功]
+18:53:54.152 [SpringApplicationShutdownHook] INFO  sys-user - [shutdownAsyncManager,28] - ====关闭后台任务任务线程池====

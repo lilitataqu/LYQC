@@ -1,0 +1,13 @@
+Application Version: ${ueit.version}
+Spring Boot Version: ${spring-boot.version}
+////////////////////////////////////////////////
+//                                            //
+//        uu      uu        eeeeeeeeee        //
+//        uu      uu        ee                //
+//        uu      uu        eeeeeeeeee        //
+//         uu    uu         ee                //
+//          uuuuuu          eeeeeeeeee        //
+//                                            //
+//   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   //
+//                河南优易信息                //
+////////////////////////////////////////////////

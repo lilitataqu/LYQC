@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0b919c"],{3207:function(n,o){$(window).load((function(){$(".loading").fadeOut()})),$(document).ready((function(){var n=$(window).width();$("html").css({fontSize:n/20}),$(window).resize((function(){var n=$(window).width();$("html").css({fontSize:n/20})}))}))}}]);

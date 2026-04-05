@@ -1,0 +1,1 @@
+<view>{{'距离'+gps_distance+''}}<button data-event-opts="{{[['tap',[['sum']]]]}}" bindtap="__e">计算</button></view>

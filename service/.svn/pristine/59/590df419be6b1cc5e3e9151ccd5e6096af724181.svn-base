@@ -1,0 +1,53 @@
+import request from '@/utils/request'
+
+// 查询比赛管理列表
+export function listTournament(query) {
+    return request({
+        url: '/running/tournament/list',
+        method: 'get',
+        params: query
+    })
+}
+
+// 查询比赛管理详细
+export function getTournament(id) {
+    return request({
+        url: '/running/tournament/' + id,
+        method: 'get'
+    })
+}
+
+// 新增比赛管理
+export function addTournament(data) {
+    return request({
+        url: '/running/tournament',
+        method: 'post',
+        data: data
+    })
+}
+
+// 修改比赛管理
+export function updateTournament(data) {
+    return request({
+        url: '/running/tournament',
+        method: 'put',
+        data: data
+    })
+}
+
+// 删除比赛管理
+export function delTournament(id) {
+    return request({
+        url: '/running/tournament/' + id,
+        method: 'delete'
+    })
+}
+
+// 查询比赛管理列表
+export function listRank(query) {
+  return request({
+    url: '/running/tournament/rank',
+    method: 'get',
+    params: query
+  })
+}

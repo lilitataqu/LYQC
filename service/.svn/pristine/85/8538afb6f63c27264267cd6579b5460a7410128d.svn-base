@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.RunInfoExtendMapper">
+
+    <resultMap type="RunInfoExtend" id="RunInfoExtendResult">
+            <result property="id" column="id"/>
+            <result property="runInfoId" column="run_info_id"/>
+            <result property="accelerometer" column="accelerometer"/>
+            <result property="str1" column="str1"/>
+            <result property="str2" column="str2"/>
+            <result property="int1" column="int1"/>
+            <result property="int2" column="int2"/>
+            <result property="createBy" column="create_by"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateBy" column="update_by"/>
+            <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectRunInfoExtendVo">
+        select id, run_info_id, accelerometer, str1, str2, int1, int2, create_by, create_time, update_by, update_time
+        from tb_run_info_extend
+    </sql>
+
+    <select id="selectRunInfoExtendList" parameterType="RunInfoExtend" resultMap="RunInfoExtendResult">
+        <include refid="selectRunInfoExtendVo"/>
+        <where>
+                        <if test="runInfoId != null ">
+                            and run_info_id = #{runInfoId}
+                        </if>
+                        <if test="accelerometer != null  and accelerometer != ''">
+                            and accelerometer = #{accelerometer}
+                        </if>
+                        <if test="str1 != null  and str1 != ''">
+                            and str1 = #{str1}
+                        </if>
+                        <if test="str2 != null  and str2 != ''">
+                            and str2 = #{str2}
+                        </if>
+                        <if test="int1 != null ">
+                            and int1 = #{int1}
+                        </if>
+                        <if test="int2 != null ">
+                            and int2 = #{int2}
+                        </if>
+        </where>
+    </select>
+
+    <select id="selectRunInfoExtendById" parameterType="Long"
+            resultMap="RunInfoExtendResult">
+            <include refid="selectRunInfoExtendVo"/>
+            where id = #{id}
+    </select>
+
+    <insert id="insertRunInfoExtend" parameterType="RunInfoExtend">
+        insert into tb_run_info_extend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="id != null">id,
+                    </if>
+                    <if test="runInfoId != null">run_info_id,
+                    </if>
+                    <if test="accelerometer != null">accelerometer,
+                    </if>
+                    <if test="str1 != null">str1,
+                    </if>
+                    <if test="str2 != null">str2,
+                    </if>
+                    <if test="int1 != null">int1,
+                    </if>
+                    <if test="int2 != null">int2,
+                    </if>
+                    <if test="createBy != null">create_by,
+                    </if>
+                    <if test="createTime != null">create_time,
+                    </if>
+                    <if test="updateBy != null">update_by,
+                    </if>
+                    <if test="updateTime != null">update_time,
+                    </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="id != null">#{id},
+                    </if>
+                    <if test="runInfoId != null">#{runInfoId},
+                    </if>
+                    <if test="accelerometer != null">#{accelerometer},
+                    </if>
+                    <if test="str1 != null">#{str1},
+                    </if>
+                    <if test="str2 != null">#{str2},
+                    </if>
+                    <if test="int1 != null">#{int1},
+                    </if>
+                    <if test="int2 != null">#{int2},
+                    </if>
+                    <if test="createBy != null">#{createBy},
+                    </if>
+                    <if test="createTime != null">#{createTime},
+                    </if>
+                    <if test="updateBy != null">#{updateBy},
+                    </if>
+                    <if test="updateTime != null">#{updateTime},
+                    </if>
+        </trim>
+    </insert>
+
+    <update id="updateRunInfoExtend" parameterType="RunInfoExtend">
+        update tb_run_info_extend
+        <trim prefix="SET" suffixOverrides=",">
+                    <if test="runInfoId != null">run_info_id =
+                        #{runInfoId},
+                    </if>
+                    <if test="accelerometer != null">accelerometer =
+                        #{accelerometer},
+                    </if>
+                    <if test="str1 != null">str1 =
+                        #{str1},
+                    </if>
+                    <if test="str2 != null">str2 =
+                        #{str2},
+                    </if>
+                    <if test="int1 != null">int1 =
+                        #{int1},
+                    </if>
+                    <if test="int2 != null">int2 =
+                        #{int2},
+                    </if>
+                    <if test="createBy != null">create_by =
+                        #{createBy},
+                    </if>
+                    <if test="createTime != null">create_time =
+                        #{createTime},
+                    </if>
+                    <if test="updateBy != null">update_by =
+                        #{updateBy},
+                    </if>
+                    <if test="updateTime != null">update_time =
+                        #{updateTime},
+                    </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRunInfoExtendById" parameterType="Long">
+        delete from tb_run_info_extend where id = #{id}
+    </delete>
+
+    <delete id="deleteRunInfoExtendByIds" parameterType="String">
+        delete from tb_run_info_extend where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

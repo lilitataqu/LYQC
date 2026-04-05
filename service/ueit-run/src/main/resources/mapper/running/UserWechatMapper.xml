@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.running.mapper.UserWechatMapper">
+
+    <resultMap type="UserWechat" id="UserWechatResult">
+            <result property="id" column="id"/>
+            <result property="userId" column="user_id"/>
+            <result property="wxOpenid" column="wx_openid"/>
+            <result property="unionid" column="unionid"/>
+            <result property="weight" column="weight"/>
+            <result property="height" column="height"/>
+            <result property="distance" column="distance"/>
+            <result property="kcal" column="kcal"/>
+            <result property="sex" column="sex"/>
+            <result property="createBy" column="create_by"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateBy" column="update_by"/>
+            <result property="updateTime" column="update_time"/>
+            <result property="str1s" column="str_1s"/>
+            <result property="str2s" column="str_2s"/>
+            <result property="int1i" column="int_1i"/>
+            <result property="int2i" column="int_2i"/>
+    </resultMap>
+
+    <sql id="selectUserWechatVo">
+        select id, user_id, wx_openid, unionid, weight, height, distance, kcal, sex, create_by, create_time, update_by, update_time, str_1s, str_2s, int_1i, int_2i
+        from user_wechat
+    </sql>
+
+    <select id="selectUserWechatList" parameterType="UserWechat" resultMap="UserWechatResult">
+        <include refid="selectUserWechatVo"/>
+        <where>
+                        <if test="userId != null ">
+                            and user_id = #{userId}
+                        </if>
+                        <if test="wxOpenid != null  and wxOpenid != ''">
+                            and wx_openid = #{wxOpenid}
+                        </if>
+                        <if test="unionid != null  and unionid != ''">
+                            and unionid = #{unionid}
+                        </if>
+                        <if test="weight != null ">
+                            and weight = #{weight}
+                        </if>
+                        <if test="height != null ">
+                            and height = #{height}
+                        </if>
+                        <if test="distance != null ">
+                            and distance = #{distance}
+                        </if>
+                        <if test="kcal != null ">
+                            and kcal = #{kcal}
+                        </if>
+                        <if test="sex != null ">
+                            and sex = #{sex}
+                        </if>
+                        <if test="str1s != null  and str1s != ''">
+                            and str_1s = #{str1s}
+                        </if>
+                        <if test="str2s != null  and str2s != ''">
+                            and str_2s = #{str2s}
+                        </if>
+                        <if test="int1i != null ">
+                            and int_1i = #{int1i}
+                        </if>
+                        <if test="int2i != null ">
+                            and int_2i = #{int2i}
+                        </if>
+        </where>
+    </select>
+
+    <select id="selectUserWechatById" parameterType="Long"
+            resultMap="UserWechatResult">
+            <include refid="selectUserWechatVo"/>
+            where id = #{id}
+    </select>
+
+    <select id="selectUserWechatByUserId" parameterType="Long" resultMap="UserWechatResult">
+        <include refid="selectUserWechatVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertUserWechat" parameterType="UserWechat" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into user_wechat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="userId != null">user_id,
+                    </if>
+                    <if test="wxOpenid != null">wx_openid,
+                    </if>
+                    <if test="unionid != null">unionid,
+                    </if>
+                    <if test="weight != null">weight,
+                    </if>
+                    <if test="height != null">height,
+                    </if>
+                    <if test="distance != null">distance,
+                    </if>
+                    <if test="kcal != null">kcal,
+                    </if>
+                    <if test="sex != null">sex,
+                    </if>
+                    <if test="createBy != null">create_by,
+                    </if>
+                    <if test="createTime != null">create_time,
+                    </if>
+                    <if test="updateBy != null">update_by,
+                    </if>
+                    <if test="updateTime != null">update_time,
+                    </if>
+                    <if test="str1s != null">str_1s,
+                    </if>
+                    <if test="str2s != null">str_2s,
+                    </if>
+                    <if test="int1i != null">int_1i,
+                    </if>
+                    <if test="int2i != null">int_2i,
+                    </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="userId != null">#{userId},
+                    </if>
+                    <if test="wxOpenid != null">#{wxOpenid},
+                    </if>
+                    <if test="unionid != null">#{unionid},
+                    </if>
+                    <if test="weight != null">#{weight},
+                    </if>
+                    <if test="height != null">#{height},
+                    </if>
+                    <if test="distance != null">#{distance},
+                    </if>
+                    <if test="kcal != null">#{kcal},
+                    </if>
+                    <if test="sex != null">#{sex},
+                    </if>
+                    <if test="createBy != null">#{createBy},
+                    </if>
+                    <if test="createTime != null">#{createTime},
+                    </if>
+                    <if test="updateBy != null">#{updateBy},
+                    </if>
+                    <if test="updateTime != null">#{updateTime},
+                    </if>
+                    <if test="str1s != null">#{str1s},
+                    </if>
+                    <if test="str2s != null">#{str2s},
+                    </if>
+                    <if test="int1i != null">#{int1i},
+                    </if>
+                    <if test="int2i != null">#{int2i},
+                    </if>
+        </trim>
+    </insert>
+
+    <update id="updateUserWechat" parameterType="UserWechat">
+        update user_wechat
+        <trim prefix="SET" suffixOverrides=",">
+                    <if test="userId != null">user_id =
+                        #{userId},
+                    </if>
+                    <if test="wxOpenid != null">wx_openid =
+                        #{wxOpenid},
+                    </if>
+                    <if test="unionid != null">unionid =
+                        #{unionid},
+                    </if>
+                    <if test="weight != null">weight =
+                        #{weight},
+                    </if>
+                    <if test="height != null">height =
+                        #{height},
+                    </if>
+                    <if test="distance != null">distance =
+                        #{distance},
+                    </if>
+                    <if test="kcal != null">kcal =
+                        #{kcal},
+                    </if>
+                    <if test="sex != null">sex =
+                        #{sex},
+                    </if>
+                    <if test="createBy != null">create_by =
+                        #{createBy},
+                    </if>
+                    <if test="createTime != null">create_time =
+                        #{createTime},
+                    </if>
+                    <if test="updateBy != null">update_by =
+                        #{updateBy},
+                    </if>
+                    <if test="updateTime != null">update_time =
+                        #{updateTime},
+                    </if>
+                    <if test="str1s != null">str_1s =
+                        #{str1s},
+                    </if>
+                    <if test="str2s != null">str_2s =
+                        #{str2s},
+                    </if>
+                    <if test="int1i != null">int_1i =
+                        #{int1i},
+                    </if>
+                    <if test="int2i != null">int_2i =
+                        #{int2i},
+                    </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserWechatById" parameterType="Long">
+        delete from user_wechat where id = #{id}
+    </delete>
+
+    <delete id="deleteUserWechatByIds" parameterType="String">
+        delete from user_wechat where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

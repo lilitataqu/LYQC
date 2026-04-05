@@ -1,0 +1,114 @@
+package com.ueit.web.controller.system;
+
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+
+import com.ueit.common.core.domain.entity.SysUser;
+import com.ueit.running.domain.dto.RunInfoListDto;
+import com.ueit.system.service.ISysUserService;
+import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.ueit.common.annotation.Log;
+import com.ueit.common.core.controller.BaseController;
+import com.ueit.common.core.domain.AjaxResult;
+import com.ueit.common.enums.BusinessType;
+import com.ueit.system.domain.ClassHour;
+import com.ueit.system.service.IClassHourService;
+import com.ueit.common.utils.poi.ExcelUtil;
+import com.ueit.common.core.page.TableDataInfo;
+
+/**
+ * 课程信息Controller
+ *
+ * @author douwq
+ * @date 2022-10-09
+ */
+@RestController
+@RequestMapping("/system/class")
+@AllArgsConstructor
+public class ClassHourController extends BaseController {
+    private final IClassHourService classHourService;
+    private final ISysUserService sysUserService;
+
+    /**
+     * 查询课程信息列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:class:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(ClassHour classHour) {
+        startPage();
+        List<ClassHour> list = classHourService.selectClassHourList(classHour);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询课程信息列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:class:list')")
+    @GetMapping("/teacherList")
+    public TableDataInfo teacherList() {
+        List<SysUser> list = sysUserService.selectRoleTeacherUserList();
+        return getDataTable(list);
+    }
+
+    /**
+     * 导出课程信息列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:class:export')")
+    @Log(title = "课程信息", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, ClassHour classHour) {
+        List<ClassHour> list = classHourService.selectClassHourList(classHour);
+        ExcelUtil<ClassHour> util = new ExcelUtil<ClassHour>(ClassHour.class);
+        util.exportExcel(response, list, "课程信息数据");
+    }
+
+    /**
+     * 获取课程信息详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:class:query')")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
+        return AjaxResult.success(classHourService.selectClassHourById(id));
+    }
+
+    /**
+     * 新增课程信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:class:add')")
+    @Log(title = "课程信息", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody ClassHour classHour) {
+        return toAjax(classHourService.insertClassHour(classHour));
+    }
+
+    /**
+     * 修改课程信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:class:edit')")
+    @Log(title = "课程信息", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public AjaxResult edit(@RequestBody ClassHour classHour) {
+        return toAjax(classHourService.updateClassHour(classHour));
+    }
+
+    /**
+     * 删除课程信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:class:remove')")
+    @Log(title = "课程信息", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
+        return toAjax(classHourService.deleteClassHourByIds(ids));
+    }
+}

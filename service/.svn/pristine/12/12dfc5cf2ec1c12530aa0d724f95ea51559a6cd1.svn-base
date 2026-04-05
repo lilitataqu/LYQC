@@ -1,0 +1,52 @@
+import request from '@/utils/request'
+
+// 查询跑步信息列表
+export function listRunning(query) {
+  return request({
+    url: '/running/running/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function listRunningSum(query) {
+  return request({
+    url: '/running/running/listSum',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询跑步信息详细
+export function getRunning(id) {
+  return request({
+    url: '/running/running/' + id,
+    method: 'get'
+  })
+}
+
+// 新增跑步信息
+export function addRunning(data) {
+  return request({
+    url: '/running/running',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改跑步信息
+export function updateRunning(data) {
+  return request({
+    url: '/running/running',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除跑步信息
+export function delRunning(id) {
+  return request({
+    url: '/running/running/' + id,
+    method: 'delete'
+  })
+}
