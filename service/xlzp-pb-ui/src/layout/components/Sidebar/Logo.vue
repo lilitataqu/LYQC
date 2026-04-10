@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '小鹿智跑管理系统',
+      title: '羚跑青春管理系统',
       logo: logoImg
     }
   }
