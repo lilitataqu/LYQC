@@ -1,8 +1,0 @@
-12:16:04.897 [schedule-pool-1] INFO  sys-user - [run,52] - [127.0.0.1]内网IP[admin][Error][验证码错误]
-12:16:09.344 [schedule-pool-1] INFO  sys-user - [run,52] - [127.0.0.1]内网IP[admin][Error][用户不存在/密码错误]
-12:16:20.339 [schedule-pool-2] INFO  sys-user - [run,52] - [127.0.0.1]内网IP[admin][Success][登录成功]
-12:31:08.741 [SpringApplicationShutdownHook] INFO  sys-user - [shutdownAsyncManager,28] - ====关闭后台任务任务线程池====
-19:08:42.964 [SpringApplicationShutdownHook] INFO  sys-user - [shutdownAsyncManager,28] - ====关闭后台任务任务线程池====
-19:11:38.320 [SpringApplicationShutdownHook] INFO  sys-user - [shutdownAsyncManager,28] - ====关闭后台任务任务线程池====
-19:13:32.266 [schedule-pool-1] INFO  sys-user - [run,52] - [127.0.0.1]内网IP[admin][Success][登录成功]
-20:30:44.847 [SpringApplicationShutdownHook] INFO  sys-user - [shutdownAsyncManager,28] - ====关闭后台任务任务线程池====
