@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ueit.common.mapper.SportKnowledgeMapper">
+
+    <resultMap id="SportKnowledgeResult" type="com.ueit.common.ai.SportKnowledge">
+        <id property="id" column="id"/>
+        <result property="category" column="category"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="keywords" column="keywords"/>
+        <result property="source" column="source"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- 根据关键词检索 -->
+    <select id="selectByKeywords" resultMap="SportKnowledgeResult">
+        SELECT * FROM sport_knowledge
+        WHERE 1=1
+        <foreach collection="keywords" item="keyword" open="AND (" separator=" OR " close=")">
+            keywords LIKE CONCAT('%', #{keyword}, '%')
+            OR title LIKE CONCAT('%', #{keyword}, '%')
+            OR content LIKE CONCAT('%', #{keyword}, '%')
+        </foreach>
+        ORDER BY 
+            (SELECT COUNT(*) FROM (
+                SELECT keywords k FROM sport_knowledge WHERE id = sport_knowledge.id
+            ) t WHERE 
+                <foreach collection="keywords" item="keyword" separator=" OR ">
+                    k LIKE CONCAT('%', #{keyword}, '%')
+                </foreach>
+            ) DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 根据分类和关键词检索 -->
+    <select id="selectByCategoryAndKeywords" resultMap="SportKnowledgeResult">
+        SELECT * FROM sport_knowledge
+        WHERE category = #{category}
+        AND (
+            <foreach collection="keywords" item="keyword" separator=" OR ">
+                keywords LIKE CONCAT('%', #{keyword}, '%')
+                OR title LIKE CONCAT('%', #{keyword}, '%')
+                OR content LIKE CONCAT('%', #{keyword}, '%')
+            </foreach>
+        )
+        LIMIT #{limit}
+    </select>
+
+</mapper>
